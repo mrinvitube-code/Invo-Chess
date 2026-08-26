@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>INVO CHESS</title>
 
+<script src="https://cdn.jsdelivr.net/npm/chess.js@1.4.0/dist/chess.min.js"></script>
+
 <style>
 * {
     box-sizing: border-box;
@@ -13,141 +15,115 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: #101522;
+    background: linear-gradient(135deg, #10152b, #202a55, #111827);
     color: white;
-}
-
-button {
-    font-family: Arial, sans-serif;
-    cursor: pointer;
-}
-
-.container {
-    max-width: 1000px;
-    margin: auto;
-    padding: 25px;
+    min-height: 100vh;
 }
 
 header {
     text-align: center;
-    padding: 25px 10px;
+    padding: 25px 15px;
+    background: rgba(0,0,0,0.35);
 }
 
-.logo {
-    font-size: 48px;
-    font-weight: bold;
-    color: #00e5ff;
+header h1 {
+    margin: 0;
+    font-size: 42px;
+    color: #ffd43b;
+    text-shadow: 3px 3px #000;
 }
 
-.creator {
-    color: #ffcc00;
-    font-size: 17px;
-    font-weight: bold;
-    margin-top: 8px;
-}
-
-.subtitle {
+header p {
+    margin: 8px 0 0;
+    font-size: 16px;
     color: #ddd;
-    margin-top: 15px;
 }
 
-.menu {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 16px;
-    margin-top: 30px;
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 15px;
+    background: rgba(0,0,0,0.25);
 }
 
-.menu-button {
+button {
     border: none;
-    border-radius: 12px;
-    padding: 20px;
-    color: white;
-    font-size: 18px;
+    border-radius: 10px;
+    padding: 11px 18px;
+    font-size: 15px;
     font-weight: bold;
+    cursor: pointer;
+    background: #ffd43b;
+    color: #111;
     transition: 0.2s;
 }
 
-.menu-button:hover {
-    transform: translateY(-3px);
-    filter: brightness(1.15);
+button:hover {
+    transform: scale(1.05);
+    background: #ffe878;
 }
 
-.green { background: #16a085; }
-.purple { background: #8e44ad; }
-.blue { background: #2980b9; }
-.orange { background: #d68910; }
-.red { background: #c0392b; }
+.page {
+    display: none;
+    max-width: 1100px;
+    margin: auto;
+    padding: 25px 15px;
+}
 
-.section-title {
+.page.active {
+    display: block;
+}
+
+.hero {
     text-align: center;
-    color: #00e5ff;
-    font-size: 34px;
-    margin: 20px 0;
+    padding: 40px 15px;
 }
 
-.card {
-    background: #182235;
-    border-radius: 12px;
-    padding: 20px;
-    margin: 15px 0;
-    border: 1px solid #263b5a;
+.hero h2 {
+    font-size: 38px;
+    margin-bottom: 10px;
 }
 
-.card h2 {
-    color: #00e5ff;
-    margin-top: 0;
-}
-
-.card p {
+.hero p {
     color: #ddd;
+    font-size: 18px;
     line-height: 1.6;
 }
 
-.action {
-    background: #263b5a;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 12px 20px;
-    font-weight: bold;
+.big-button {
+    margin: 10px;
+    font-size: 18px;
+    padding: 15px 25px;
 }
 
-.back {
-    display: block;
-    margin: 25px auto;
-    background: #c0392b;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 12px 30px;
-    font-weight: bold;
+.game-layout {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 25px;
+    flex-wrap: wrap;
 }
 
-.hidden {
-    display: none;
-}
-
-/* Chess */
-
-.chess-area {
-    text-align: center;
-}
-
-.board {
+#board {
     width: min(90vw, 560px);
     height: min(90vw, 560px);
-    margin: 20px auto;
+    max-width: 560px;
+    max-height: 560px;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
-    border: 5px solid #263b5a;
+    border: 6px solid #111;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .square {
+    aspect-ratio: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: clamp(28px, 7vw, 55px);
+    position: relative;
+    cursor: pointer;
     user-select: none;
 }
 
@@ -159,31 +135,119 @@ header {
     background: #b58863;
 }
 
-.selected {
-    outline: 5px solid #00e5ff;
-    outline-offset: -5px;
+.square.selected {
+    box-shadow: inset 0 0 0 5px #ffe033;
 }
 
-.turn {
-    color: #ffcc00;
-    font-size: 20px;
+.square.move::after {
+    content: "";
+    width: 22%;
+    height: 22%;
+    border-radius: 50%;
+    background: rgba(20,20,20,0.35);
+    position: absolute;
+}
+
+.square.capture::after {
+    content: "";
+    position: absolute;
+    inset: 5px;
+    border: 5px solid rgba(220,40,40,0.7);
+    border-radius: 50%;
+}
+
+.piece {
+    font-size: clamp(34px, 7vw, 64px);
+    line-height: 1;
+    z-index: 2;
+    text-shadow: 2px 2px 2px rgba(0,0,0,0.35);
+}
+
+.game-info {
+    width: 300px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 18px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.game-info h2 {
+    margin-top: 0;
+    color: #ffd43b;
+}
+
+#status {
+    background: rgba(0,0,0,0.3);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
     font-weight: bold;
 }
 
-/* Mobile */
+.mode-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
 
-@media (max-width: 600px) {
+.mode-buttons button {
+    font-size: 13px;
+    padding: 9px 12px;
+}
 
-    .logo {
-        font-size: 36px;
+.coaches {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+}
+
+.coach {
+    background: rgba(255,255,255,0.09);
+    border-radius: 18px;
+    padding: 20px;
+    border: 1px solid rgba(255,255,255,0.12);
+}
+
+.coach-icon {
+    font-size: 45px;
+}
+
+.coach h3 {
+    color: #ffd43b;
+}
+
+.coach p {
+    color: #ddd;
+    line-height: 1.5;
+}
+
+.lesson {
+    background: rgba(0,0,0,0.25);
+    padding: 12px;
+    border-radius: 10px;
+}
+
+footer {
+    text-align: center;
+    padding: 30px 15px;
+    margin-top: 30px;
+    background: rgba(0,0,0,0.3);
+    color: #ccc;
+}
+
+footer strong {
+    color: #ffd43b;
+}
+
+@media (max-width: 700px) {
+    header h1 {
+        font-size: 32px;
     }
 
-    .section-title {
-        font-size: 27px;
-    }
-
-    .container {
-        padding: 15px;
+    .game-info {
+        width: 90vw;
+        max-width: 560px;
     }
 }
 </style>
@@ -191,653 +255,472 @@ header {
 
 <body>
 
-<div class="container">
-
 <header>
-    <div class="logo">♟ INVO CHESS ♟</div>
-    <div class="creator">
-        Made by Invo (Rudra PS Chauhan)
-    </div>
-    <div class="subtitle">
-        Learn • Play • Improve
-    </div>
+    <h1>♟ INVO CHESS ♟</h1>
+    <p>Learn • Play • Improve</p>
 </header>
 
+<nav>
+    <button onclick="showPage('home')">🏠 Home</button>
+    <button onclick="showPage('game')">♟ Play Chess</button>
+    <button onclick="showPage('coaches')">🎓 Coaches</button>
+    <button onclick="showPage('about')">ℹ️ About</button>
+</nav>
 
-<!-- HOME -->
+<section id="home" class="page active">
+    <div class="hero">
+        <h2>Welcome to INVO CHESS!</h2>
 
-<section id="home">
+        <p>
+            A chess project created by Invo.
+            Practice your chess skills, learn from coaches,
+            and challenge the computer.
+        </p>
 
-<div class="menu">
+        <button class="big-button" onclick="showPage('game')">
+            ♟ PLAY CHESS
+        </button>
 
-<button class="menu-button green"
-onclick="showSection('play')">
-♟ PLAY CHESS
-</button>
-
-<button class="menu-button purple"
-onclick="showSection('coaches')">
-🎓 CHESS COACHES
-</button>
-
-<button class="menu-button blue"
-onclick="showSection('stats')">
-📊 STATS & HISTORY
-</button>
-
-<button class="menu-button orange"
-onclick="showSection('settings')">
-⚙ SETTINGS
-</button>
-
-</div>
-
+        <button class="big-button" onclick="showPage('coaches')">
+            🎓 MEET THE COACHES
+        </button>
+    </div>
 </section>
 
+<section id="game" class="page">
 
-<!-- PLAY -->
+    <h2 style="text-align:center;">♟ Chess Arena</h2>
 
-<section id="play" class="hidden">
+    <div class="game-layout">
 
-<h1 class="section-title">♟ PLAY CHESS</h1>
+        <div>
+            <div id="board"></div>
+        </div>
 
-<div class="card">
-<h2>🤖 Play vs Computer</h2>
-<p>
-Challenge a computer opponent and improve your chess skills.
-</p>
-<button class="action" onclick="comingSoon('Computer opponent')">
-Play
-</button>
-</div>
+        <div class="game-info">
 
-<div class="card">
-<h2>👥 Play with Friend</h2>
-<p>
-Play a two-player chess game on the same device.
-</p>
-<button class="action" onclick="startChess()">
-Start Game
-</button>
-</div>
+            <h2>Game Info</h2>
 
-<div class="card">
-<h2>🌐 Play Online</h2>
-<p>
-Play chess against another player over the internet.
-</p>
-<button class="action" onclick="comingSoon('Online multiplayer')">
-Play Online
-</button>
-</div>
+            <div class="mode-buttons">
+                <button onclick="setMode('computer')">
+                    🤖 vs Computer
+                </button>
 
-<div class="card">
-<h2>⏱ Time Control</h2>
-<p>
-Choose from 1, 3, 5, 10 or 30 minute games.
-</p>
+                <button onclick="setMode('friend')">
+                    👥 Two Players
+                </button>
+            </div>
 
-<button class="action"
-onclick="chooseTime(1)">
-1 MIN
-</button>
+            <div id="status">
+                Your turn
+            </div>
 
-<button class="action"
-onclick="chooseTime(3)">
-3 MIN
-</button>
+            <p>
+                <b>Mode:</b>
+                <span id="modeText">Computer</span>
+            </p>
 
-<button class="action"
-onclick="chooseTime(5)">
-5 MIN
-</button>
+            <p>
+                <b>Turn:</b>
+                <span id="turnText">White</span>
+            </p>
 
-<button class="action"
-onclick="chooseTime(10)">
-10 MIN
-</button>
+            <button onclick="undoMove()">↩ Undo</button>
+            <button onclick="newGame()">🔄 New Game</button>
 
-<button class="action"
-onclick="chooseTime(30)">
-30 MIN
-</button>
+            <hr>
 
-</div>
+            <h3>How to play</h3>
 
-<button class="back" onclick="goHome()">
-← BACK
-</button>
+            <p>
+                Click one of your pieces and then click a highlighted
+                square to move it.
+            </p>
 
+            <p>
+                Yellow = selected piece<br>
+                Dot = legal move<br>
+                Red circle = capture
+            </p>
+
+        </div>
+    </div>
 </section>
 
+<section id="coaches" class="page">
 
-<!-- CHESS -->
+    <h2 style="text-align:center;">🎓 INVO CHESS COACHES</h2>
 
-<section id="chess" class="hidden">
+    <div class="coaches">
 
-<h1 class="section-title">
-♟ INVO CHESS BOARD
-</h1>
+        <div class="coach">
+            <div class="coach-icon">🧠</div>
+            <h3>Coach Alpha</h3>
+            <p>
+                Beginner coach. Learn how the chess pieces move,
+                basic tactics and simple opening ideas.
+            </p>
 
-<div class="chess-area">
+            <div class="lesson">
+                <b>Lesson:</b>
+                Control the center of the board.
+            </div>
+        </div>
 
-<div class="turn" id="turn">
-White's Turn
-</div>
+        <div class="coach">
+            <div class="coach-icon">⚔️</div>
+            <h3>Coach Knight</h3>
+            <p>
+                Tactical coach. Learn forks, pins, discovered attacks
+                and powerful combinations.
+            </p>
 
-<div id="board" class="board"></div>
+            <div class="lesson">
+                <b>Lesson:</b>
+                Look for checks, captures and threats.
+            </div>
+        </div>
 
-<button class="action" onclick="resetBoard()">
-↻ Restart
-</button>
+        <div class="coach">
+            <div class="coach-icon">👑</div>
+            <h3>Coach King</h3>
+            <p>
+                Strategy coach. Learn king safety, piece activity,
+                pawn structures and endgames.
+            </p>
 
-</div>
+            <div class="lesson">
+                <b>Lesson:</b>
+                Keep your king safe during the opening.
+            </div>
+        </div>
 
-<button class="back" onclick="goHome()">
-← HOME
-</button>
+        <div class="coach">
+            <div class="coach-icon">🏆</div>
+            <h3>Coach Champion</h3>
+            <p>
+                Advanced coach. Improve calculation, positional play
+                and tournament thinking.
+            </p>
 
+            <div class="lesson">
+                <b>Lesson:</b>
+                Always calculate your opponent's best response.
+            </div>
+        </div>
+
+    </div>
 </section>
 
+<section id="about" class="page">
 
-<!-- COACHES -->
+    <div class="hero">
 
-<section id="coaches" class="hidden">
+        <h2>About INVO CHESS</h2>
 
-<h1 class="section-title">
-🎓 CHESS COACHES
-</h1>
+        <p>
+            INVO CHESS is a chess project created by Invo.
+            The goal is to make chess fun, educational and accessible.
+        </p>
 
-<div class="card">
-<h2>🧑‍🏫 Coach Alex — Beginner</h2>
-<p>
-Learn the board, piece movements, basic rules and simple tactics.
-</p>
-<button class="action"
-onclick="lesson('Coach Alex','Learn how every chess piece moves and understand the basic rules of chess.')">
-Learn
-</button>
-</div>
+        <h3>🚀 Future Plans</h3>
 
-<div class="card">
-<h2>🧠 Coach Maya — Tactics</h2>
-<p>
-Learn forks, pins, skewers and discovered attacks.
-</p>
-<button class="action"
-onclick="lesson('Coach Maya','A fork attacks two or more pieces at the same time. A pin prevents a piece from moving because something valuable is behind it.')">
-Learn
-</button>
-</div>
+        <p>
+            Online multiplayer<br>
+            Better computer opponent<br>
+            Chess clocks<br>
+            Player accounts<br>
+            Ratings and leaderboards<br>
+            Mobile apps
+        </p>
 
-<div class="card">
-<h2>👑 Coach Leo — Openings</h2>
-<p>
-Learn beginner-friendly opening principles.
-</p>
-<button class="action"
-onclick="lesson('Coach Leo','Control the center, develop your pieces, protect your king and avoid moving the same piece repeatedly without a reason.')">
-Learn
-</button>
-</div>
-
-<div class="card">
-<h2>⚔ Coach Ryan — Middlegame</h2>
-<p>
-Learn attacking, defending and creating plans.
-</p>
-<button class="action"
-onclick="lesson('Coach Ryan','Look for weak enemy pieces, open files, strong squares and attacking opportunities while keeping your king safe.')">
-Learn
-</button>
-</div>
-
-<div class="card">
-<h2>🏁 Coach Sara — Endgame</h2>
-<p>
-Learn king and pawn endings and basic checkmates.
-</p>
-<button class="action"
-onclick="lesson('Coach Sara','In the endgame your king becomes powerful. Activate your king, push passed pawns carefully and learn basic checkmates.')">
-Learn
-</button>
-</div>
-
-<div class="card">
-<h2>🏆 Coach Invo — Challenges</h2>
-<p>
-Test yourself with chess challenges and puzzles.
-</p>
-<button class="action"
-onclick="lesson('Coach Invo','Challenge: Your opponent attacks your rook. Can you find a move that attacks their queen while protecting your rook?')">
-Challenge
-</button>
-</div>
-
-<button class="back" onclick="goHome()">
-← BACK
-</button>
-
+    </div>
 </section>
 
-
-<!-- STATS -->
-
-<section id="stats" class="hidden">
-
-<h1 class="section-title">
-📊 STATS & HISTORY
-</h1>
-
-<div class="card">
-<h2>Your Statistics</h2>
-
-<p>
-Games Played:
-<strong id="games">0</strong>
-</p>
-
-<p>
-Wins:
-<strong id="wins">0</strong>
-</p>
-
-<p>
-Losses:
-<strong id="losses">0</strong>
-</p>
-
-<p>
-Draws:
-<strong>0</strong>
-</p>
-
-</div>
-
-<button class="back" onclick="goHome()">
-← BACK
-</button>
-
-</section>
-
-
-<!-- SETTINGS -->
-
-<section id="settings" class="hidden">
-
-<h1 class="section-title">
-⚙ SETTINGS
-</h1>
-
-<div class="card">
-<h2>🎨 Board Style</h2>
-<p>
-Customize your chessboard colors.
-</p>
-<button class="action"
-onclick="comingSoon('Board themes')">
-Customize
-</button>
-</div>
-
-<div class="card">
-<h2>🔊 Sound</h2>
-<p>
-Game sounds will be available in a future version.
-</p>
-<button class="action"
-onclick="comingSoon('Sound settings')">
-Sound
-</button>
-</div>
-
-<div class="card">
-<h2>🌙 Dark Mode</h2>
-<p>
-INVO CHESS currently uses a dark theme.
-</p>
-</div>
-
-<button class="back" onclick="goHome()">
-← BACK
-</button>
-
-</section>
-
-</div>
-
+<footer>
+    <p>♟ INVO CHESS</p>
+    <p>Made by <strong>Invo (Rudra PS Chauhan)</strong></p>
+</footer>
 
 <script>
 
-let games = 0;
-let wins = 0;
-let losses = 0;
+let chess = new Chess();
+let selectedSquare = null;
+let mode = "computer";
 
-let selected = null;
-let turn = "white";
+const pieceSymbols = {
+    w: {
+        p: "♙",
+        n: "♘",
+        b: "♗",
+        r: "♖",
+        q: "♕",
+        k: "♔"
+    },
+    b: {
+        p: "♟",
+        n: "♞",
+        b: "♝",
+        r: "♜",
+        q: "♛",
+        k: "♚"
+    }
+};
 
-const pieces = [
-    ["♜","♞","♝","♛","♚","♝","♞","♜"],
-    ["♟","♟","♟","♟","♟","♟","♟","♟"],
-    ["","","","","","","",""],
-    ["","","","","","","",""],
-    ["","","","","","","",""],
-    ["","","","","","","",""],
-    ["♙","♙","♙","♙","♙","♙","♙","♙"],
-    ["♖","♘","♗","♕","♔","♗","♘","♖"]
-];
+function showPage(id) {
 
-let board = JSON.parse(JSON.stringify(pieces));
-
-
-function hideAll() {
-
-    document
-    .querySelectorAll("section")
-    .forEach(section => {
-        section.classList.add("hidden");
+    document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
     });
+
+    document.getElementById(id).classList.add("active");
+
+    if (id === "game") {
+        renderBoard();
+    }
 }
 
+function renderBoard() {
 
-function showSection(id) {
+    const board = document.getElementById("board");
+    board.innerHTML = "";
 
-    hideAll();
-
-    document
-    .getElementById(id)
-    .classList.remove("hidden");
-}
-
-
-function goHome() {
-
-    hideAll();
-
-    document
-    .getElementById("home")
-    .classList.remove("hidden");
-}
-
-
-function comingSoon(feature) {
-
-    alert(
-        feature +
-        " is coming in the next INVO CHESS version! 🚀"
-    );
-}
-
-
-function lesson(coach, text) {
-
-    alert(
-        coach +
-        "\\n\\n" +
-        text
-    );
-}
-
-
-function chooseTime(minutes) {
-
-    alert(
-        minutes +
-        " minute time control selected! ⏱️"
-    );
-}
-
-
-function startChess() {
-
-    showSection("chess");
-
-    resetBoard();
-
-}
-
-
-function resetBoard() {
-
-    board = JSON.parse(JSON.stringify(pieces));
-
-    selected = null;
-
-    turn = "white";
-
-    drawBoard();
-
-}
-
-
-function drawBoard() {
-
-    const boardElement =
-        document.getElementById("board");
-
-    boardElement.innerHTML = "";
+    const position = chess.board();
 
     for (let row = 0; row < 8; row++) {
 
         for (let col = 0; col < 8; col++) {
 
-            const square =
-                document.createElement("div");
+            const square = document.createElement("div");
 
-            square.classList.add("square");
+            const file = String.fromCharCode(97 + col);
+            const rank = 8 - row;
 
-            if ((row + col) % 2 === 0) {
+            const squareName = file + rank;
 
-                square.classList.add("light");
+            square.className =
+                "square " +
+                ((row + col) % 2 === 0 ? "light" : "dark");
 
-            } else {
+            square.dataset.square = squareName;
 
-                square.classList.add("dark");
-
+            if (selectedSquare === squareName) {
+                square.classList.add("selected");
             }
 
-            square.textContent =
-                board[row][col];
+            const piece = position[row][col];
+
+            if (piece) {
+
+                const pieceElement = document.createElement("span");
+
+                pieceElement.className = "piece";
+
+                pieceElement.textContent =
+                    pieceSymbols[piece.color][piece.type];
+
+                square.appendChild(pieceElement);
+            }
+
+            if (selectedSquare) {
+
+                const moves = chess.moves({
+                    square: selectedSquare,
+                    verbose: true
+                });
+
+                const possibleMove =
+                    moves.find(m => m.to === squareName);
+
+                if (possibleMove) {
+
+                    if (possibleMove.captured) {
+                        square.classList.add("capture");
+                    } else {
+                        square.classList.add("move");
+                    }
+                }
+            }
+
+            square.addEventListener("click", () => {
+                handleSquareClick(squareName);
+            });
+
+            board.appendChild(square);
+        }
+    }
+
+    updateStatus();
+}
+
+function handleSquareClick(square) {
+
+    if (chess.isGameOver()) {
+        return;
+    }
+
+    const piece = chess.get(square);
+
+    if (!selectedSquare) {
+
+        if (!piece) return;
+
+        if (piece.color !== chess.turn()) return;
+
+        if (mode === "computer" && chess.turn() === "b") {
+            return;
+        }
+
+        selectedSquare = square;
+        renderBoard();
+        return;
+    }
+
+    try {
+
+        const move = chess.move({
+            from: selectedSquare,
+            to: square,
+            promotion: "q"
+        });
+
+        if (move) {
+
+            selectedSquare = null;
+            renderBoard();
 
             if (
-                selected &&
-                selected.row === row &&
-                selected.col === col
+                mode === "computer" &&
+                chess.turn() === "b" &&
+                !chess.isGameOver()
             ) {
-
-                square.classList.add("selected");
-
+                setTimeout(computerMove, 500);
             }
 
-            square.onclick =
-                () => clickSquare(row, col);
-
-            boardElement.appendChild(square);
-        }
-    }
-
-    document.getElementById("turn")
-        .textContent =
-        turn === "white"
-        ? "White's Turn"
-        : "Black's Turn";
-}
-
-
-function isWhite(piece) {
-
-    return [
-        "♙","♖","♘",
-        "♗","♕","♔"
-    ].includes(piece);
-
-}
-
-
-function isBlack(piece) {
-
-    return [
-        "♟","♜","♞",
-        "♝","♛","♚"
-    ].includes(piece);
-
-}
-
-
-function clickSquare(row, col) {
-
-    const piece =
-        board[row][col];
-
-
-    if (!selected) {
-
-        if (piece === "") {
             return;
         }
 
-        if (
-            turn === "white" &&
-            !isWhite(piece)
-        ) {
-            return;
-        }
-
-        if (
-            turn === "black" &&
-            !isBlack(piece)
-        ) {
-            return;
-        }
-
-        selected = {
-            row: row,
-            col: col
-        };
-
-        drawBoard();
-
-        return;
+    } catch (error) {
+        // Illegal move
     }
 
-
-    const oldRow =
-        selected.row;
-
-    const oldCol =
-        selected.col;
-
-    if (
-        oldRow === row &&
-        oldCol === col
-    ) {
-
-        selected = null;
-
-        drawBoard();
-
-        return;
+    if (piece && piece.color === chess.turn()) {
+        selectedSquare = square;
+    } else {
+        selectedSquare = null;
     }
 
+    renderBoard();
+}
 
-    const movingPiece =
-        board[oldRow][oldCol];
+function computerMove() {
 
-    const targetPiece =
-        board[row][col];
+    if (chess.isGameOver()) return;
 
+    const moves = chess.moves({ verbose: true });
 
-    // Basic same-color protection
+    if (moves.length === 0) return;
 
-    if (
-        targetPiece !== "" &&
-        (
-            (isWhite(movingPiece) &&
-             isWhite(targetPiece))
-            ||
-            (isBlack(movingPiece) &&
-             isBlack(targetPiece))
-        )
-    ) {
+    let chosenMove = moves[Math.floor(Math.random() * moves.length)];
 
-        selected = null;
+    // Prefer captures.
+    const captures = moves.filter(move => move.captured);
 
-        drawBoard();
-
-        return;
+    if (captures.length > 0) {
+        chosenMove =
+            captures[Math.floor(Math.random() * captures.length)];
     }
 
+    chess.move({
+        from: chosenMove.from,
+        to: chosenMove.to,
+        promotion: "q"
+    });
 
-    // Move piece
+    renderBoard();
+}
 
-    board[row][col] =
-        movingPiece;
+function undoMove() {
 
-    board[oldRow][oldCol] =
-        "";
+    if (chess.history().length === 0) return;
 
+    chess.undo();
 
-    // King captured
+    if (mode === "computer" && chess.turn() === "b") {
+        chess.undo();
+    }
 
-    if (
-        targetPiece === "♔" ||
-        targetPiece === "♚"
-    ) {
+    selectedSquare = null;
+    renderBoard();
+}
+
+function newGame() {
+
+    chess.reset();
+    selectedSquare = null;
+
+    renderBoard();
+}
+
+function setMode(newMode) {
+
+    mode = newMode;
+
+    document.getElementById("modeText").textContent =
+        newMode === "computer"
+        ? "Computer"
+        : "Two Players";
+
+    newGame();
+}
+
+function updateStatus() {
+
+    const status = document.getElementById("status");
+    const turnText = document.getElementById("turnText");
+
+    turnText.textContent =
+        chess.turn() === "w"
+        ? "White"
+        : "Black";
+
+    if (chess.isCheckmate()) {
 
         const winner =
-            turn === "white"
-            ? "White"
-            : "Black";
+            chess.turn() === "w"
+            ? "Black"
+            : "White";
 
-        games++;
-
-        if (winner === "White") {
-            wins++;
-        } else {
-            losses++;
-        }
-
-        updateStats();
-
-        alert(
-            winner +
-            " wins! 🏆\\n\\n" +
-            "Made by Invo (Rudra PS Chauhan)"
-        );
-
-        resetBoard();
-
-        goHome();
+        status.textContent =
+            "🏆 Checkmate! " + winner + " wins!";
 
         return;
     }
 
+    if (chess.isDraw()) {
 
-    turn =
-        turn === "white"
-        ? "black"
-        : "white";
+        status.textContent =
+            "🤝 Draw!";
 
-    selected = null;
+        return;
+    }
 
-    drawBoard();
+    if (chess.inCheck()) {
 
+        status.textContent =
+            "⚠️ Check! " +
+            (chess.turn() === "w" ? "White" : "Black") +
+            " is in check.";
+
+        return;
+    }
+
+    status.textContent =
+        (chess.turn() === "w" ? "White" : "Black") +
+        " to move.";
 }
 
-
-function updateStats() {
-
-    document.getElementById("games")
-        .textContent = games;
-
-    document.getElementById("wins")
-        .textContent = wins;
-
-    document.getElementById("losses")
-        .textContent = losses;
-
-}
-
+renderBoard();
 
 </script>
 
