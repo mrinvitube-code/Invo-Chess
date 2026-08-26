@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INVO CHESS</title>
+<title>INVO CHESS v3</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chess.js@1.4.0/dist/chess.min.js"></script>
 
@@ -15,7 +15,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #10152b, #202a55, #111827);
+    background: linear-gradient(135deg, #08111f, #172554, #111827);
     color: white;
     min-height: 100vh;
 }
@@ -23,51 +23,47 @@ body {
 header {
     text-align: center;
     padding: 25px 15px;
-    background: rgba(0,0,0,0.35);
+    background: rgba(0,0,0,.4);
 }
 
 header h1 {
     margin: 0;
-    font-size: 42px;
     color: #ffd43b;
+    font-size: 42px;
     text-shadow: 3px 3px #000;
 }
 
 header p {
-    margin: 8px 0 0;
-    font-size: 16px;
     color: #ddd;
 }
 
 nav {
     display: flex;
     justify-content: center;
-    gap: 10px;
     flex-wrap: wrap;
+    gap: 8px;
     padding: 15px;
-    background: rgba(0,0,0,0.25);
+    background: rgba(0,0,0,.3);
 }
 
 button {
-    border: none;
+    border: 0;
     border-radius: 10px;
-    padding: 11px 18px;
-    font-size: 15px;
+    padding: 11px 16px;
     font-weight: bold;
     cursor: pointer;
     background: #ffd43b;
     color: #111;
-    transition: 0.2s;
+    margin: 3px;
 }
 
 button:hover {
-    transform: scale(1.05);
-    background: #ffe878;
+    transform: scale(1.04);
 }
 
 .page {
     display: none;
-    max-width: 1100px;
+    max-width: 1200px;
     margin: auto;
     padding: 25px 15px;
 }
@@ -78,24 +74,18 @@ button:hover {
 
 .hero {
     text-align: center;
-    padding: 40px 15px;
+    padding: 35px 10px;
 }
 
 .hero h2 {
     font-size: 38px;
-    margin-bottom: 10px;
 }
 
-.hero p {
-    color: #ddd;
-    font-size: 18px;
-    line-height: 1.6;
-}
-
-.big-button {
-    margin: 10px;
-    font-size: 18px;
-    padding: 15px 25px;
+.card {
+    background: rgba(255,255,255,.08);
+    border-radius: 18px;
+    padding: 20px;
+    margin: 15px 0;
 }
 
 .game-layout {
@@ -109,12 +99,10 @@ button:hover {
 #board {
     width: min(90vw, 560px);
     height: min(90vw, 560px);
-    max-width: 560px;
-    max-height: 560px;
     display: grid;
     grid-template-columns: repeat(8, 1fr);
-    border: 6px solid #111;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border: 6px solid #080808;
+    box-shadow: 0 15px 35px rgba(0,0,0,.5);
 }
 
 .square {
@@ -135,119 +123,130 @@ button:hover {
     background: #b58863;
 }
 
-.square.selected {
-    box-shadow: inset 0 0 0 5px #ffe033;
+.selected {
+    box-shadow: inset 0 0 0 5px #ffe600;
 }
 
-.square.move::after {
+.move::after {
     content: "";
+    position: absolute;
     width: 22%;
     height: 22%;
     border-radius: 50%;
-    background: rgba(20,20,20,0.35);
-    position: absolute;
+    background: rgba(0,0,0,.35);
 }
 
-.square.capture::after {
+.capture::after {
     content: "";
     position: absolute;
     inset: 5px;
-    border: 5px solid rgba(220,40,40,0.7);
+    border: 5px solid rgba(220,30,30,.7);
     border-radius: 50%;
 }
 
 .piece {
-    font-size: clamp(34px, 7vw, 64px);
-    line-height: 1;
+    font-size: clamp(35px, 7vw, 65px);
     z-index: 2;
-    text-shadow: 2px 2px 2px rgba(0,0,0,0.35);
+    line-height: 1;
+    text-shadow: 2px 2px 2px rgba(0,0,0,.35);
 }
 
 .game-info {
-    width: 300px;
-    background: rgba(255,255,255,0.08);
+    width: 320px;
+    background: rgba(255,255,255,.08);
     border-radius: 18px;
     padding: 20px;
-    backdrop-filter: blur(10px);
 }
 
-.game-info h2 {
-    margin-top: 0;
+.game-info h2,
+.card h2 {
     color: #ffd43b;
 }
 
-#status {
-    background: rgba(0,0,0,0.3);
-    padding: 15px;
+.status {
+    padding: 14px;
     border-radius: 10px;
-    margin-bottom: 15px;
+    background: rgba(0,0,0,.35);
+    margin: 10px 0;
     font-weight: bold;
 }
 
-.mode-buttons {
+.clock-area {
     display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 15px;
+    gap: 10px;
 }
 
-.mode-buttons button {
-    font-size: 13px;
-    padding: 9px 12px;
+.clock {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    background: rgba(0,0,0,.4);
+    border-radius: 10px;
 }
 
-.coaches {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    gap: 20px;
-}
-
-.coach {
-    background: rgba(255,255,255,0.09);
-    border-radius: 18px;
-    padding: 20px;
-    border: 1px solid rgba(255,255,255,0.12);
-}
-
-.coach-icon {
-    font-size: 45px;
-}
-
-.coach h3 {
+.clock strong {
+    display: block;
+    font-size: 25px;
     color: #ffd43b;
 }
 
-.coach p {
-    color: #ddd;
-    line-height: 1.5;
+.coaches,
+.puzzles,
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap: 18px;
 }
 
-.lesson {
-    background: rgba(0,0,0,0.25);
-    padding: 12px;
-    border-radius: 10px;
+.coach,
+.puzzle,
+.feature {
+    background: rgba(255,255,255,.08);
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.coach h3,
+.feature h3 {
+    color: #ffd43b;
+}
+
+.big-icon {
+    font-size: 45px;
+}
+
+input,
+select {
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    margin: 5px;
+}
+
+#hintBox {
+    color: #ffe66d;
+    min-height: 25px;
 }
 
 footer {
     text-align: center;
-    padding: 30px 15px;
-    margin-top: 30px;
-    background: rgba(0,0,0,0.3);
+    padding: 30px;
+    background: rgba(0,0,0,.35);
     color: #ccc;
+    margin-top: 30px;
 }
 
 footer strong {
     color: #ffd43b;
 }
 
-@media (max-width: 700px) {
+@media(max-width:700px) {
     header h1 {
-        font-size: 32px;
+        font-size: 31px;
     }
 
     .game-info {
         width: 90vw;
-        max-width: 560px;
     }
 }
 </style>
@@ -257,470 +256,1148 @@ footer strong {
 
 <header>
     <h1>♟ INVO CHESS ♟</h1>
-    <p>Learn • Play • Improve</p>
+    <p>Play • Learn • Improve • Challenge</p>
 </header>
 
 <nav>
     <button onclick="showPage('home')">🏠 Home</button>
-    <button onclick="showPage('game')">♟ Play Chess</button>
+    <button onclick="showPage('game')">♟ Play</button>
     <button onclick="showPage('coaches')">🎓 Coaches</button>
+    <button onclick="showPage('puzzles')">🧩 Puzzles</button>
+    <button onclick="showPage('stats')">📊 Stats</button>
+    <button onclick="showPage('online')">🌐 Online</button>
     <button onclick="showPage('about')">ℹ️ About</button>
 </nav>
 
 <section id="home" class="page active">
-    <div class="hero">
-        <h2>Welcome to INVO CHESS!</h2>
 
-        <p>
-            A chess project created by Invo.
-            Practice your chess skills, learn from coaches,
-            and challenge the computer.
-        </p>
+<div class="hero">
 
-        <button class="big-button" onclick="showPage('game')">
-            ♟ PLAY CHESS
-        </button>
+<h2>Welcome to INVO CHESS!</h2>
 
-        <button class="big-button" onclick="showPage('coaches')">
-            🎓 MEET THE COACHES
-        </button>
-    </div>
+<p>
+A chess project created by Invo.
+Play chess, train your skills and become a better player.
+</p>
+
+<button onclick="showPage('game')">♟ START PLAYING</button>
+<button onclick="showPage('coaches')">🎓 LEARN CHESS</button>
+
+</div>
+
+<div class="features">
+
+<div class="feature">
+<div class="big-icon">🤖</div>
+<h3>Smart Computer</h3>
+<p>Challenge a simple built-in chess AI.</p>
+</div>
+
+<div class="feature">
+<div class="big-icon">⏱️</div>
+<h3>Chess Clocks</h3>
+<p>Play 5, 10 or 15 minute games.</p>
+</div>
+
+<div class="feature">
+<div class="big-icon">🎓</div>
+<h3>Coaches</h3>
+<p>Learn opening, tactics, strategy and endgames.</p>
+</div>
+
+<div class="feature">
+<div class="big-icon">🧩</div>
+<h3>Puzzles</h3>
+<p>Practice chess tactics.</p>
+</div>
+
+</div>
+
 </section>
+
 
 <section id="game" class="page">
 
-    <h2 style="text-align:center;">♟ Chess Arena</h2>
+<h2 style="text-align:center;">♟ INVO CHESS ARENA</h2>
 
-    <div class="game-layout">
+<div class="game-layout">
 
-        <div>
-            <div id="board"></div>
-        </div>
+<div>
+<div id="board"></div>
+</div>
 
-        <div class="game-info">
+<div class="game-info">
 
-            <h2>Game Info</h2>
+<h2>Game Controls</h2>
 
-            <div class="mode-buttons">
-                <button onclick="setMode('computer')">
-                    🤖 vs Computer
-                </button>
+<div class="status" id="status">
+White to move
+</div>
 
-                <button onclick="setMode('friend')">
-                    👥 Two Players
-                </button>
-            </div>
+<div class="clock-area">
 
-            <div id="status">
-                Your turn
-            </div>
+<div class="clock">
+White
+<strong id="whiteClock">10:00</strong>
+</div>
 
-            <p>
-                <b>Mode:</b>
-                <span id="modeText">Computer</span>
-            </p>
+<div class="clock">
+Black
+<strong id="blackClock">10:00</strong>
+</div>
 
-            <p>
-                <b>Turn:</b>
-                <span id="turnText">White</span>
-            </p>
+</div>
 
-            <button onclick="undoMove()">↩ Undo</button>
-            <button onclick="newGame()">🔄 New Game</button>
+<br>
 
-            <hr>
+<label>Game Time:</label>
 
-            <h3>How to play</h3>
+<select id="timeSelect" onchange="changeTime()">
+<option value="300">5 Minutes</option>
+<option value="600" selected>10 Minutes</option>
+<option value="900">15 Minutes</option>
+</select>
 
-            <p>
-                Click one of your pieces and then click a highlighted
-                square to move it.
-            </p>
+<br>
 
-            <p>
-                Yellow = selected piece<br>
-                Dot = legal move<br>
-                Red circle = capture
-            </p>
+<button onclick="setMode('computer')">
+🤖 Computer
+</button>
 
-        </div>
-    </div>
+<button onclick="setMode('friend')">
+👥 Friend
+</button>
+
+<br>
+
+<button onclick="newGame()">
+🔄 New Game
+</button>
+
+<button onclick="undoMove()">
+↩ Undo
+</button>
+
+<button onclick="giveHint()">
+💡 Hint
+</button>
+
+<p>
+<b>Mode:</b>
+<span id="modeText">Computer</span>
+</p>
+
+<p>
+<b>Turn:</b>
+<span id="turnText">White</span>
+</p>
+
+<div id="hintBox"></div>
+
+</div>
+
+</div>
+
 </section>
+
 
 <section id="coaches" class="page">
 
-    <h2 style="text-align:center;">🎓 INVO CHESS COACHES</h2>
+<h2 style="text-align:center;">🎓 INVO CHESS COACHES</h2>
 
-    <div class="coaches">
+<div class="coaches">
 
-        <div class="coach">
-            <div class="coach-icon">🧠</div>
-            <h3>Coach Alpha</h3>
-            <p>
-                Beginner coach. Learn how the chess pieces move,
-                basic tactics and simple opening ideas.
-            </p>
+<div class="coach">
 
-            <div class="lesson">
-                <b>Lesson:</b>
-                Control the center of the board.
-            </div>
-        </div>
+<div class="big-icon">🧠</div>
 
-        <div class="coach">
-            <div class="coach-icon">⚔️</div>
-            <h3>Coach Knight</h3>
-            <p>
-                Tactical coach. Learn forks, pins, discovered attacks
-                and powerful combinations.
-            </p>
+<h3>Coach Alpha</h3>
 
-            <div class="lesson">
-                <b>Lesson:</b>
-                Look for checks, captures and threats.
-            </div>
-        </div>
+<p>
+Beginner coach. Learn how every chess piece moves,
+basic openings and board control.
+</p>
 
-        <div class="coach">
-            <div class="coach-icon">👑</div>
-            <h3>Coach King</h3>
-            <p>
-                Strategy coach. Learn king safety, piece activity,
-                pawn structures and endgames.
-            </p>
+<button onclick="showLesson('Control the center and develop your pieces early.')">
+Learn
+</button>
 
-            <div class="lesson">
-                <b>Lesson:</b>
-                Keep your king safe during the opening.
-            </div>
-        </div>
+</div>
 
-        <div class="coach">
-            <div class="coach-icon">🏆</div>
-            <h3>Coach Champion</h3>
-            <p>
-                Advanced coach. Improve calculation, positional play
-                and tournament thinking.
-            </p>
 
-            <div class="lesson">
-                <b>Lesson:</b>
-                Always calculate your opponent's best response.
-            </div>
-        </div>
+<div class="coach">
 
-    </div>
+<div class="big-icon">⚔️</div>
+
+<h3>Coach Knight</h3>
+
+<p>
+Tactical coach. Learn forks, pins, skewers,
+checks and captures.
+</p>
+
+<button onclick="showLesson('Before moving, look for checks, captures and threats.')">
+Learn
+</button>
+
+</div>
+
+
+<div class="coach">
+
+<div class="big-icon">👑</div>
+
+<h3>Coach King</h3>
+
+<p>
+Strategy coach. Learn king safety,
+piece activity and pawn structures.
+</p>
+
+<button onclick="showLesson('Castle early when it is safe and keep your king protected.')">
+Learn
+</button>
+
+</div>
+
+
+<div class="coach">
+
+<div class="big-icon">🏆</div>
+
+<h3>Coach Champion</h3>
+
+<p>
+Advanced coach. Improve calculation,
+planning and endgame technique.
+</p>
+
+<button onclick="showLesson('Always calculate your opponent’s strongest reply.')">
+Learn
+</button>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2>📚 Coach Lesson</h2>
+
+<p id="lessonText">
+Choose a coach above to start a lesson.
+</p>
+
+</div>
+
 </section>
+
+
+<section id="puzzles" class="page">
+
+<h2 style="text-align:center;">🧩 Chess Puzzles</h2>
+
+<div class="puzzles">
+
+<div class="puzzle">
+
+<h3>Puzzle 1</h3>
+
+<p>
+You are in a position where your opponent's king is exposed.
+What should you look for first?
+</p>
+
+<button onclick="puzzleAnswer(1)">
+Show Hint
+</button>
+
+</div>
+
+
+<div class="puzzle">
+
+<h3>Puzzle 2</h3>
+
+<p>
+Your opponent has two pieces lined up.
+Can you attack both with one knight move?
+</p>
+
+<button onclick="puzzleAnswer(2)">
+Show Hint
+</button>
+
+</div>
+
+
+<div class="puzzle">
+
+<h3>Training Tip</h3>
+
+<p>
+In every position ask:
+</p>
+
+<p>
+<strong>
+Checks → Captures → Threats
+</strong>
+</p>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<p id="puzzleResult">
+Choose a puzzle to receive a hint.
+</p>
+
+</div>
+
+</section>
+
+
+<section id="stats" class="page">
+
+<h2>📊 My Chess Stats</h2>
+
+<div class="card">
+
+<p>
+Games played:
+<strong id="gamesPlayed">0</strong>
+</p>
+
+<p>
+Games won:
+<strong id="gamesWon">0</strong>
+</p>
+
+<p>
+Games lost:
+<strong id="gamesLost">0</strong>
+</p>
+
+<p>
+Draws:
+<strong id="gamesDrawn">0</strong>
+</p>
+
+<button onclick="resetStats()">
+Reset Stats
+</button>
+
+</div>
+
+</section>
+
+
+<section id="online" class="page">
+
+<div class="hero">
+
+<h2>🌐 Online Multiplayer</h2>
+
+<p>
+This is the future multiplayer section of INVO CHESS.
+</p>
+
+</div>
+
+<div class="card">
+
+<h3>🚧 Multiplayer Server</h3>
+
+<p>
+Real-time multiplayer requires a server so two different
+devices can communicate with each other.
+</p>
+
+<p>
+The current website is prepared for multiplayer,
+but this feature requires a backend/server connection.
+</p>
+
+<p>
+Future features:
+</p>
+
+<ul>
+<li>👥 Create a room</li>
+<li>🔗 Invite a friend</li>
+<li>🏆 Online ratings</li>
+<li>💬 Game chat</li>
+<li>🌐 Real-time games</li>
+</ul>
+
+</div>
+
+</section>
+
 
 <section id="about" class="page">
 
-    <div class="hero">
+<div class="hero">
 
-        <h2>About INVO CHESS</h2>
+<h2>ℹ️ About INVO CHESS</h2>
 
-        <p>
-            INVO CHESS is a chess project created by Invo.
-            The goal is to make chess fun, educational and accessible.
-        </p>
+<p>
+INVO CHESS is an original chess project created by Invo.
+</p>
 
-        <h3>🚀 Future Plans</h3>
+<h3>🚀 Future Plans</h3>
 
-        <p>
-            Online multiplayer<br>
-            Better computer opponent<br>
-            Chess clocks<br>
-            Player accounts<br>
-            Ratings and leaderboards<br>
-            Mobile apps
-        </p>
+<p>
+Smarter AI<br>
+Online multiplayer<br>
+Player accounts<br>
+Leaderboards<br>
+Chess tournaments<br>
+Mobile applications
+</p>
 
-    </div>
+</div>
+
 </section>
 
+
 <footer>
-    <p>♟ INVO CHESS</p>
-    <p>Made by <strong>Invo (Rudra PS Chauhan)</strong></p>
+
+<p>♟ INVO CHESS</p>
+
+<p>
+Made by <strong>Invo (Rudra PS Chauhan)</strong>
+</p>
+
 </footer>
+
 
 <script>
 
-let chess = new Chess();
+let game = new Chess();
+
 let selectedSquare = null;
+
 let mode = "computer";
 
-const pieceSymbols = {
-    w: {
-        p: "♙",
-        n: "♘",
-        b: "♗",
-        r: "♖",
-        q: "♕",
-        k: "♔"
-    },
-    b: {
-        p: "♟",
-        n: "♞",
-        b: "♝",
-        r: "♜",
-        q: "♛",
-        k: "♚"
-    }
+let gameTime = 600;
+
+let whiteTime = gameTime;
+
+let blackTime = gameTime;
+
+let timer = null;
+
+let gameStarted = false;
+
+let stats = JSON.parse(
+    localStorage.getItem("invoChessStats")
+) || {
+    played: 0,
+    won: 0,
+    lost: 0,
+    drawn: 0
 };
+
+
+const pieces = {
+
+w: {
+p:"♙",
+n:"♘",
+b:"♗",
+r:"♖",
+q:"♕",
+k:"♔"
+},
+
+b: {
+p:"♟",
+n:"♞",
+b:"♝",
+r:"♜",
+q:"♛",
+k:"♚"
+}
+
+};
+
 
 function showPage(id) {
 
-    document.querySelectorAll(".page").forEach(page => {
-        page.classList.remove("active");
-    });
+document.querySelectorAll(".page").forEach(p => {
+p.classList.remove("active");
+});
 
-    document.getElementById(id).classList.add("active");
+document.getElementById(id).classList.add("active");
 
-    if (id === "game") {
-        renderBoard();
-    }
+if(id === "game") {
+renderBoard();
 }
+
+if(id === "stats") {
+updateStats();
+}
+
+}
+
 
 function renderBoard() {
 
-    const board = document.getElementById("board");
-    board.innerHTML = "";
+const board = document.getElementById("board");
 
-    const position = chess.board();
+board.innerHTML = "";
 
-    for (let row = 0; row < 8; row++) {
+const position = game.board();
 
-        for (let col = 0; col < 8; col++) {
+for(let row=0; row<8; row++) {
 
-            const square = document.createElement("div");
+for(let col=0; col<8; col++) {
 
-            const file = String.fromCharCode(97 + col);
-            const rank = 8 - row;
+const square = document.createElement("div");
 
-            const squareName = file + rank;
+const file =
+String.fromCharCode(97 + col);
 
-            square.className =
-                "square " +
-                ((row + col) % 2 === 0 ? "light" : "dark");
+const rank = 8-row;
 
-            square.dataset.square = squareName;
+const name = file + rank;
 
-            if (selectedSquare === squareName) {
-                square.classList.add("selected");
-            }
+square.className =
+"square " +
+((row+col)%2===0 ? "light":"dark");
 
-            const piece = position[row][col];
+square.dataset.square = name;
 
-            if (piece) {
-
-                const pieceElement = document.createElement("span");
-
-                pieceElement.className = "piece";
-
-                pieceElement.textContent =
-                    pieceSymbols[piece.color][piece.type];
-
-                square.appendChild(pieceElement);
-            }
-
-            if (selectedSquare) {
-
-                const moves = chess.moves({
-                    square: selectedSquare,
-                    verbose: true
-                });
-
-                const possibleMove =
-                    moves.find(m => m.to === squareName);
-
-                if (possibleMove) {
-
-                    if (possibleMove.captured) {
-                        square.classList.add("capture");
-                    } else {
-                        square.classList.add("move");
-                    }
-                }
-            }
-
-            square.addEventListener("click", () => {
-                handleSquareClick(squareName);
-            });
-
-            board.appendChild(square);
-        }
-    }
-
-    updateStatus();
+if(selectedSquare === name) {
+square.classList.add("selected");
 }
 
-function handleSquareClick(square) {
+const piece = position[row][col];
 
-    if (chess.isGameOver()) {
-        return;
-    }
+if(piece) {
 
-    const piece = chess.get(square);
+const span =
+document.createElement("span");
 
-    if (!selectedSquare) {
+span.className="piece";
 
-        if (!piece) return;
+span.textContent =
+pieces[piece.color][piece.type];
 
-        if (piece.color !== chess.turn()) return;
+square.appendChild(span);
 
-        if (mode === "computer" && chess.turn() === "b") {
-            return;
-        }
-
-        selectedSquare = square;
-        renderBoard();
-        return;
-    }
-
-    try {
-
-        const move = chess.move({
-            from: selectedSquare,
-            to: square,
-            promotion: "q"
-        });
-
-        if (move) {
-
-            selectedSquare = null;
-            renderBoard();
-
-            if (
-                mode === "computer" &&
-                chess.turn() === "b" &&
-                !chess.isGameOver()
-            ) {
-                setTimeout(computerMove, 500);
-            }
-
-            return;
-        }
-
-    } catch (error) {
-        // Illegal move
-    }
-
-    if (piece && piece.color === chess.turn()) {
-        selectedSquare = square;
-    } else {
-        selectedSquare = null;
-    }
-
-    renderBoard();
 }
 
-function computerMove() {
 
-    if (chess.isGameOver()) return;
+if(selectedSquare) {
 
-    const moves = chess.moves({ verbose: true });
+const moves =
+game.moves({
+square:selectedSquare,
+verbose:true
+});
 
-    if (moves.length === 0) return;
+const possible =
+moves.find(m=>m.to===name);
 
-    let chosenMove = moves[Math.floor(Math.random() * moves.length)];
+if(possible) {
 
-    // Prefer captures.
-    const captures = moves.filter(move => move.captured);
-
-    if (captures.length > 0) {
-        chosenMove =
-            captures[Math.floor(Math.random() * captures.length)];
-    }
-
-    chess.move({
-        from: chosenMove.from,
-        to: chosenMove.to,
-        promotion: "q"
-    });
-
-    renderBoard();
+if(possible.captured) {
+square.classList.add("capture");
+} else {
+square.classList.add("move");
 }
 
-function undoMove() {
-
-    if (chess.history().length === 0) return;
-
-    chess.undo();
-
-    if (mode === "computer" && chess.turn() === "b") {
-        chess.undo();
-    }
-
-    selectedSquare = null;
-    renderBoard();
 }
 
-function newGame() {
-
-    chess.reset();
-    selectedSquare = null;
-
-    renderBoard();
 }
 
-function setMode(newMode) {
 
-    mode = newMode;
+square.onclick=()=>{
+clickSquare(name);
+};
 
-    document.getElementById("modeText").textContent =
-        newMode === "computer"
-        ? "Computer"
-        : "Two Players";
+board.appendChild(square);
 
-    newGame();
 }
 
-function updateStatus() {
+}
 
-    const status = document.getElementById("status");
-    const turnText = document.getElementById("turnText");
+updateStatus();
 
-    turnText.textContent =
-        chess.turn() === "w"
-        ? "White"
-        : "Black";
+}
 
-    if (chess.isCheckmate()) {
 
-        const winner =
-            chess.turn() === "w"
-            ? "Black"
-            : "White";
+function clickSquare(square) {
 
-        status.textContent =
-            "🏆 Checkmate! " + winner + " wins!";
+if(game.isGameOver()) {
+return;
+}
 
-        return;
-    }
+if(mode==="computer" &&
+game.turn()==="b") {
+return;
+}
 
-    if (chess.isDraw()) {
+const piece=game.get(square);
 
-        status.textContent =
-            "🤝 Draw!";
 
-        return;
-    }
+if(!selectedSquare) {
 
-    if (chess.inCheck()) {
+if(!piece) return;
 
-        status.textContent =
-            "⚠️ Check! " +
-            (chess.turn() === "w" ? "White" : "Black") +
-            " is in check.";
+if(piece.color!==game.turn()) return;
 
-        return;
-    }
+selectedSquare=square;
 
-    status.textContent =
-        (chess.turn() === "w" ? "White" : "Black") +
-        " to move.";
+renderBoard();
+
+return;
+
+}
+
+
+try {
+
+const move=game.move({
+
+from:selectedSquare,
+
+to:square,
+
+promotion:"q"
+
+});
+
+if(move) {
+
+selectedSquare=null;
+
+if(!gameStarted) {
+startClock();
+gameStarted=true;
+}
+
+recordPosition();
+
+renderBoard();
+
+if(game.isGameOver()) {
+finishGame();
+return;
+}
+
+if(mode==="computer" &&
+game.turn()==="b") {
+
+setTimeout(computerMove,500);
+
+}
+
+return;
+
+}
+
+} catch(e) {}
+
+
+if(piece &&
+piece.color===game.turn()) {
+
+selectedSquare=square;
+
+} else {
+
+selectedSquare=null;
+
 }
 
 renderBoard();
+
+}
+
+
+function computerMove() {
+
+if(game.isGameOver()) return;
+
+const moves =
+game.moves({verbose:true});
+
+if(moves.length===0) return;
+
+let bestMove=null;
+
+let bestScore=-Infinity;
+
+for(const move of moves) {
+
+game.move({
+from:move.from,
+to:move.to,
+promotion:"q"
+});
+
+let score =
+evaluatePosition(game);
+
+game.undo();
+
+if(score>bestScore) {
+
+bestScore=score;
+bestMove=move;
+
+}
+
+}
+
+
+if(!bestMove) {
+
+bestMove =
+moves[Math.floor(Math.random()*moves.length)];
+
+}
+
+game.move({
+
+from:bestMove.from,
+
+to:bestMove.to,
+
+promotion:"q"
+
+});
+
+recordPosition();
+
+renderBoard();
+
+if(game.isGameOver()) {
+finishGame();
+}
+
+}
+
+
+function evaluatePosition(position) {
+
+const values={
+p:100,
+n:320,
+b:330,
+r:500,
+q:900,
+k:20000
+};
+
+let score=0;
+
+const board=position.board();
+
+for(const row of board) {
+
+for(const piece of row) {
+
+if(!piece) continue;
+
+const value=values[piece.type];
+
+if(piece.color==="b") {
+score+=value;
+} else {
+score-=value;
+}
+
+}
+
+}
+
+return score + Math.random()*5;
+
+}
+
+
+function undoMove() {
+
+if(game.history().length===0) {
+return;
+}
+
+game.undo();
+
+if(mode==="computer" &&
+game.history().length>0) {
+
+game.undo();
+
+}
+
+selectedSquare=null;
+
+renderBoard();
+
+}
+
+
+function newGame() {
+
+stopClock();
+
+game=new Chess();
+
+selectedSquare=null;
+
+whiteTime=gameTime;
+
+blackTime=gameTime;
+
+gameStarted=false;
+
+document.getElementById("hintBox").textContent="";
+
+updateClock();
+
+renderBoard();
+
+}
+
+
+function setMode(newMode) {
+
+mode=newMode;
+
+document.getElementById("modeText").textContent =
+newMode==="computer"
+? "Computer"
+: "Two Players";
+
+newGame();
+
+}
+
+
+function changeTime() {
+
+gameTime =
+parseInt(
+document.getElementById("timeSelect").value
+);
+
+newGame();
+
+}
+
+
+function startClock() {
+
+stopClock();
+
+timer=setInterval(()=>{
+
+if(game.isGameOver()) {
+
+stopClock();
+return;
+
+}
+
+if(game.turn()==="w") {
+
+whiteTime--;
+
+} else {
+
+blackTime--;
+
+}
+
+updateClock();
+
+if(whiteTime<=0) {
+
+whiteTime=0;
+stopClock();
+
+alert("⏰ White's time is over!");
+
+finishGame();
+
+}
+
+if(blackTime<=0) {
+
+blackTime=0;
+stopClock();
+
+alert("⏰ Black's time is over!");
+
+finishGame();
+
+}
+
+},1000);
+
+}
+
+
+function stopClock() {
+
+if(timer) {
+
+clearInterval(timer);
+
+timer=null;
+
+}
+
+}
+
+
+function updateClock() {
+
+document.getElementById("whiteClock").textContent =
+formatTime(whiteTime);
+
+document.getElementById("blackClock").textContent =
+formatTime(blackTime);
+
+}
+
+
+function formatTime(seconds) {
+
+const min =
+Math.floor(seconds/60);
+
+const sec =
+seconds%60;
+
+return min + ":" +
+String(sec).padStart(2,"0");
+
+}
+
+
+function updateStatus() {
+
+const status =
+document.getElementById("status");
+
+const turn =
+document.getElementById("turnText");
+
+turn.textContent =
+game.turn()==="w"
+? "White"
+: "Black";
+
+
+if(game.isCheckmate()) {
+
+const winner =
+game.turn()==="w"
+? "Black"
+: "White";
+
+status.textContent =
+"🏆 Checkmate! " +
+winner +
+" wins!";
+
+return;
+
+}
+
+
+if(game.isDraw()) {
+
+status.textContent =
+"🤝 Draw!";
+
+return;
+
+}
+
+
+if(game.inCheck()) {
+
+status.textContent =
+"⚠️ Check! " +
+(game.turn()==="w"
+? "White"
+: "Black") +
+" is in check.";
+
+return;
+
+}
+
+
+status.textContent =
+(game.turn()==="w"
+? "White"
+: "Black") +
+" to move.";
+
+}
+
+
+function finishGame() {
+
+stopClock();
+
+stats.played++;
+
+if(game.isDraw()) {
+
+stats.drawn++;
+
+} else if(game.isCheckmate()) {
+
+const winner =
+game.turn()==="w"
+? "Black"
+: "White";
+
+if(mode==="computer") {
+
+if(winner==="White") {
+stats.won++;
+} else {
+stats.lost++;
+}
+
+}
+
+}
+
+saveStats();
+
+updateStats();
+
+}
+
+
+function saveStats() {
+
+localStorage.setItem(
+"invoChessStats",
+JSON.stringify(stats)
+);
+
+}
+
+
+function updateStats() {
+
+document.getElementById("gamesPlayed").textContent =
+stats.played;
+
+document.getElementById("gamesWon").textContent =
+stats.won;
+
+document.getElementById("gamesLost").textContent =
+stats.lost;
+
+document.getElementById("gamesDrawn").textContent =
+stats.drawn;
+
+}
+
+
+function resetStats() {
+
+stats={
+played:0,
+won:0,
+lost:0,
+drawn:0
+};
+
+saveStats();
+
+updateStats();
+
+}
+
+
+function giveHint() {
+
+const moves =
+game.moves({verbose:true});
+
+if(moves.length===0) {
+
+document.getElementById("hintBox").textContent =
+"No moves available.";
+
+return;
+
+}
+
+const move =
+moves[Math.floor(Math.random()*moves.length)];
+
+document.getElementById("hintBox").textContent =
+"💡 Try: " +
+move.from.toUpperCase() +
+" → " +
+move.to.toUpperCase();
+
+}
+
+
+function showLesson(text) {
+
+document.getElementById("lessonText").textContent =
+text;
+
+}
+
+
+function puzzleAnswer(number) {
+
+const result =
+document.getElementById("puzzleResult");
+
+if(number===1) {
+
+result.textContent =
+"💡 Hint: Look for a forcing move, especially a check.";
+
+}
+
+if(number===2) {
+
+result.textContent =
+"💡 Hint: A knight can attack two pieces at once with a fork.";
+
+}
+
+}
+
+
+function recordPosition() {
+
+/*
+Future feature:
+game history and player analysis.
+*/
+
+}
+
+
+updateClock();
+
+renderBoard();
+
+updateStats();
 
 </script>
 
