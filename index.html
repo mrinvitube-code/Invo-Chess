@@ -1,43 +1,2442 @@
-<!-- SUPPORT INVO CHESS -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INVO CHESS v5</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chess.js@1.4.0/dist/chess.min.js"></script>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    color: #f5f5f5;
+    min-height: 100vh;
+
+    background:
+        radial-gradient(circle at 15% 15%, rgba(255,255,255,.08), transparent 25%),
+        radial-gradient(circle at 85% 80%, rgba(120,70,25,.18), transparent 30%),
+        linear-gradient(135deg, #090909, #17120d, #0b0b0b);
+
+    background-size: 200% 200%;
+    animation: backgroundMove 18s ease infinite;
+}
+
+@keyframes backgroundMove {
+
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+
+    background-image:
+        repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,.015) 0px,
+            rgba(255,255,255,.015) 1px,
+            transparent 1px,
+            transparent 5px
+        );
+
+    opacity: .35;
+    z-index: -1;
+}
+
+/* HEADER */
+
+header {
+    text-align: center;
+    padding: 28px 15px;
+
+    background:
+        linear-gradient(
+            rgba(0,0,0,.85),
+            rgba(20,15,10,.8)
+        );
+
+    border-bottom: 2px solid #6f4e2f;
+
+    box-shadow:
+        0 5px 25px rgba(0,0,0,.7);
+}
+
+header h1 {
+    margin: 0;
+
+    color: #d9a441;
+
+    font-size: 44px;
+
+    letter-spacing: 2px;
+
+    text-shadow:
+        2px 3px 0 #000,
+        0 0 15px rgba(217,164,65,.25);
+}
+
+header p {
+    color: #cfcfcf;
+    margin-bottom: 0;
+}
+
+/* NAV */
+
+nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    padding: 14px;
+
+    background: rgba(0,0,0,.7);
+
+    border-bottom: 1px solid #3b2a1b;
+
+    backdrop-filter: blur(8px);
+}
+
+button {
+    border: 1px solid #7a582f;
+
+    border-radius: 8px;
+
+    padding: 11px 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    background:
+        linear-gradient(
+            #d9a441,
+            #a87528
+        );
+
+    color: #17100a;
+
+    margin: 3px;
+
+    box-shadow:
+        inset 0 1px rgba(255,255,255,.3),
+        0 3px 8px rgba(0,0,0,.5);
+
+    transition: .18s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+
+    background:
+        linear-gradient(
+            #edbd55,
+            #b9802e
+        );
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,.6);
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+/* PAGES */
+
+.page {
+    display: none;
+
+    max-width: 1200px;
+
+    margin: auto;
+
+    padding: 28px 15px;
+}
+
+.page.active {
+    display: block;
+}
+
+/* HERO */
+
+.hero {
+    text-align: center;
+    padding: 38px 10px;
+}
+
+.hero h2 {
+    font-size: 40px;
+
+    color: #d9a441;
+
+    text-shadow:
+        2px 2px #000;
+}
+
+/* CARDS */
+
+.card,
+.game-info {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.07),
+            rgba(0,0,0,.35)
+        );
+
+    border: 1px solid #4d3824;
+
+    border-radius: 15px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.45),
+        inset 0 1px rgba(255,255,255,.05);
+
+    backdrop-filter: blur(7px);
+}
+
+.card {
+    margin: 15px 0;
+}
+
+/* GAME */
+
+.game-layout {
+    display: flex;
+
+    justify-content: center;
+
+    align-items: flex-start;
+
+    gap: 30px;
+
+    flex-wrap: wrap;
+}
+
+/* REALISTIC BOARD */
+
+#board {
+    width: min(90vw, 600px);
+    height: min(90vw, 600px);
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(8, 1fr);
+
+    border: 12px solid #3b2413;
+
+    border-radius: 7px;
+
+    overflow: hidden;
+
+    background: #3b2413;
+
+    box-shadow:
+        0 8px 0 #241508,
+        0 18px 30px rgba(0,0,0,.8),
+        0 0 40px rgba(0,0,0,.5);
+
+    position: relative;
+}
+
+#board::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    border: 2px solid rgba(255,255,255,.12);
+
+    z-index: 10;
+}
+
+/* SQUARES */
+
+.square {
+    aspect-ratio: 1;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    position: relative;
+
+    cursor: pointer;
+
+    user-select: none;
+
+    transition:
+        filter .15s,
+        transform .1s;
+}
+
+.light {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,.025) 0px,
+            rgba(255,255,255,.025) 2px,
+            transparent 2px,
+            transparent 9px
+        ),
+        linear-gradient(
+            135deg,
+            #e8c99b,
+            #cda875
+        );
+}
+
+.dark {
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,.018) 0px,
+            rgba(255,255,255,.018) 2px,
+            transparent 2px,
+            transparent 10px
+        ),
+        linear-gradient(
+            135deg,
+            #8a5b37,
+            #603b22
+        );
+}
+
+.square:hover {
+    filter: brightness(1.12);
+}
+
+.selected {
+    box-shadow:
+        inset 0 0 0 5px #e7c45d,
+        inset 0 0 20px rgba(255,220,80,.35);
+
+    z-index: 4;
+}
+
+/* MOVE */
+
+.move::after {
+    content: "";
+
+    position: absolute;
+
+    width: 20%;
+    height: 20%;
+
+    border-radius: 50%;
+
+    background:
+        rgba(30,20,10,.45);
+
+    box-shadow:
+        0 1px 4px rgba(0,0,0,.5);
+}
+
+/* CAPTURE */
+
+.capture::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 6px;
+
+    border:
+        5px solid rgba(160,35,25,.75);
+
+    border-radius: 50%;
+
+    box-shadow:
+        inset 0 0 8px rgba(0,0,0,.35),
+        0 0 5px rgba(0,0,0,.35);
+}
+
+/* PIECES */
+
+.piece {
+    font-size:
+        clamp(
+            35px,
+            7vw,
+            70px
+        );
+
+    z-index: 3;
+
+    line-height: 1;
+
+    user-select: none;
+
+    transform: translateY(-1px);
+
+    transition:
+        transform .12s,
+        filter .12s;
+
+    filter:
+        drop-shadow(
+            3px 5px 2px rgba(0,0,0,.55)
+        );
+}
+
+.square:hover .piece {
+    transform:
+        translateY(-3px)
+        scale(1.03);
+}
+
+.light .piece,
+.dark .piece {
+    text-shadow:
+        1px 1px 0 #fff,
+        -1px -1px 0 #aaa,
+        2px 3px 3px rgba(0,0,0,.65);
+}
+
+/* GAME INFO */
+
+.game-info {
+    width: 330px;
+}
+
+.game-info h2,
+.card h2 {
+    color: #d9a441;
+
+    text-shadow:
+        1px 1px #000;
+}
+
+.status {
+    padding: 14px;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0,0,0,.65),
+            rgba(40,25,15,.5)
+        );
+
+    border: 1px solid #4c3823;
+
+    margin: 10px 0;
+
+    font-weight: bold;
+}
+
+/* CLOCK */
+
+.clock-area {
+    display: flex;
+
+    gap: 10px;
+}
+
+.clock {
+    flex: 1;
+
+    text-align: center;
+
+    padding: 14px;
+
+    background:
+        linear-gradient(
+            #17110c,
+            #080706
+        );
+
+    border:
+        1px solid #4d3823;
+
+    border-radius: 9px;
+
+    box-shadow:
+        inset 0 2px 8px rgba(0,0,0,.7);
+}
+
+.clock strong {
+    display: block;
+
+    font-size: 27px;
+
+    color: #e4bd62;
+
+    margin-top: 4px;
+}
+
+/* OTHER SECTIONS */
+
+.coaches,
+.puzzles,
+.features {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(220px,1fr)
+        );
+
+    gap: 18px;
+}
+
+.coach,
+.puzzle,
+.feature {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.06),
+            rgba(0,0,0,.35)
+        );
+
+    border:
+        1px solid #4a3521;
+
+    border-radius: 14px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,.35);
+
+    transition: .2s;
+}
+
+.coach:hover,
+.puzzle:hover,
+.feature:hover {
+    transform: translateY(-4px);
+
+    border-color: #79582f;
+
+    box-shadow:
+        0 12px 25px rgba(0,0,0,.5);
+}
+
+.coach h3,
+.feature h3 {
+    color: #d9a441;
+}
+
+.big-icon {
+    font-size: 45px;
+}
+
+input,
+select {
+    padding: 10px;
+
+    border-radius: 7px;
+
+    border:
+        1px solid #60472a;
+
+    margin: 5px;
+
+    background: #16110c;
+
+    color: white;
+}
+
+/* HINT */
+
+#hintBox {
+    color: #e9ca69;
+
+    min-height: 25px;
+}
+
+/* =========================
+   DONATION BOX
+========================= */
+
+.donation-box {
+    max-width: 650px;
+
+    margin: 30px auto;
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.08),
+            rgba(0,0,0,.4)
+        );
+
+    border:
+        1px solid #6b4b28;
+
+    box-shadow:
+        0 15px 35px rgba(0,0,0,.5);
+}
+
+.donation-box .big-icon {
+    font-size: 65px;
+
+    margin-bottom: 10px;
+}
+
+.donation-box h2 {
+    color: #d9a441;
+}
+
+.donation-message {
+    margin: 20px 0;
+
+    padding: 14px;
+
+    border-radius: 10px;
+
+    background:
+        rgba(217,164,65,.12);
+
+    border:
+        1px solid #6b4b28;
+
+    color: #e7c46b;
+}
+
+#donationMessage {
+    color: #e7c46b;
+
+    font-weight: bold;
+
+    min-height: 25px;
+}
+
+/* FOOTER */
+
+footer {
+    text-align: center;
+
+    padding: 30px;
+
+    background:
+        rgba(0,0,0,.55);
+
+    color: #aaa;
+
+    margin-top: 30px;
+
+    border-top:
+        1px solid #3d2b1a;
+}
+
+footer strong {
+    color: #d9a441;
+}
+
+/* MOBILE */
+
+@media(max-width:700px) {
+
+    header h1 {
+        font-size: 31px;
+    }
+
+    .game-info {
+        width: 90vw;
+    }
+
+    .hero h2 {
+        font-size: 30px;
+    }
+
+    #board {
+        border-width: 7px;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<header>
+
+<h1>♟ INVO CHESS ♟</h1>
+
+<p>
+Play • Learn • Improve • Challenge
+</p>
+
+</header>
+
+
+<nav>
+
+<button onclick="showPage('home')">
+🏠 Home
+</button>
+
+<button onclick="showPage('game')">
+♟ Play
+</button>
+
+<button onclick="showPage('coaches')">
+🎓 Coaches
+</button>
+
+<button onclick="showPage('puzzles')">
+🧩 Puzzles
+</button>
+
+<button onclick="showPage('stats')">
+📊 Stats
+</button>
+
+<button onclick="showPage('online')">
+🌐 Online
+</button>
+
+<button onclick="showPage('support')">
+❤️ Support
+</button>
+
+<button onclick="showPage('about')">
+ℹ️ About
+</button>
+
+</nav>
+
+
+<!-- HOME -->
+
+<section id="home" class="page active">
+
+<div class="hero">
+
+<h2>
+Welcome to INVO CHESS!
+</h2>
+
+<p>
+A chess project created by Invo.
+Play chess, train your skills and become a better player.
+</p>
+
+<button onclick="showPage('game')">
+♟ START PLAYING
+</button>
+
+<button onclick="showPage('coaches')">
+🎓 LEARN CHESS
+</button>
+
+</div>
+
+
+<div class="features">
+
+<div class="feature">
+
+<div class="big-icon">
+🤖
+</div>
+
+<h3>
+Smart Computer
+</h3>
+
+<p>
+Challenge a simple built-in chess AI.
+</p>
+
+</div>
+
+
+<div class="feature">
+
+<div class="big-icon">
+⏱️
+</div>
+
+<h3>
+Chess Clocks
+</h3>
+
+<p>
+Play 5, 10 or 15 minute games.
+</p>
+
+</div>
+
+
+<div class="feature">
+
+<div class="big-icon">
+🎓
+</div>
+
+<h3>
+Coaches
+</h3>
+
+<p>
+Learn opening, tactics, strategy and endgames.
+</p>
+
+</div>
+
+
+<div class="feature">
+
+<div class="big-icon">
+🧩
+</div>
+
+<h3>
+Puzzles
+</h3>
+
+<p>
+Practice chess tactics.
+</p>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- GAME -->
+
+<section id="game" class="page">
+
+<h2 style="text-align:center;">
+♟ INVO CHESS ARENA
+</h2>
+
+
+<div class="game-layout">
+
+<div>
+
+<div id="board"></div>
+
+</div>
+
+
+<div class="game-info">
+
+<h2>
+Game Controls
+</h2>
+
+
+<div class="status" id="status">
+White to move
+</div>
+
+
+<div class="clock-area">
+
+<div class="clock">
+
+White
+
+<strong id="whiteClock">
+10:00
+</strong>
+
+</div>
+
+
+<div class="clock">
+
+Black
+
+<strong id="blackClock">
+10:00
+</strong>
+
+</div>
+
+</div>
+
+
+<br>
+
+
+<label>
+Game Time:
+</label>
+
+
+<select id="timeSelect" onchange="changeTime()">
+
+<option value="300">
+5 Minutes
+</option>
+
+<option value="600" selected>
+10 Minutes
+</option>
+
+<option value="900">
+15 Minutes
+</option>
+
+</select>
+
+
+<br>
+
+
+<button onclick="setMode('computer')">
+🤖 Computer
+</button>
+
+
+<button onclick="setMode('friend')">
+👥 Friend
+</button>
+
+
+<br>
+
+
+<button onclick="newGame()">
+🔄 New Game
+</button>
+
+
+<button onclick="undoMove()">
+↩ Undo
+</button>
+
+
+<button onclick="giveHint()">
+💡 Hint
+</button>
+
+
+<p>
+<b>Mode:</b>
+
+<span id="modeText">
+Computer
+</span>
+
+</p>
+
+
+<p>
+<b>Turn:</b>
+
+<span id="turnText">
+White
+</span>
+
+</p>
+
+
+<div id="hintBox"></div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- COACHES -->
+
+<section id="coaches" class="page">
+
+<h2 style="text-align:center;">
+🎓 INVO CHESS COACHES
+</h2>
+
+
+<div class="coaches">
+
+<div class="coach">
+
+<div class="big-icon">
+🧠
+</div>
+
+<h3>
+Coach Alpha
+</h3>
+
+<p>
+Beginner coach. Learn how every chess piece moves,
+basic openings and board control.
+</p>
+
+<button onclick="showLesson('Control the center and develop your pieces early.')">
+Learn
+</button>
+
+</div>
+
+
+<div class="coach">
+
+<div class="big-icon">
+⚔️
+</div>
+
+<h3>
+Coach Knight
+</h3>
+
+<p>
+Tactical coach. Learn forks, pins, skewers,
+checks and captures.
+</p>
+
+<button onclick="showLesson('Before moving, look for checks, captures and threats.')">
+Learn
+</button>
+
+</div>
+
+
+<div class="coach">
+
+<div class="big-icon">
+👑
+</div>
+
+<h3>
+Coach King
+</h3>
+
+<p>
+Strategy coach. Learn king safety,
+piece activity and pawn structures.
+</p>
+
+<button onclick="showLesson('Castle early when it is safe and keep your king protected.')">
+Learn
+</button>
+
+</div>
+
+
+<div class="coach">
+
+<div class="big-icon">
+🏆
+</div>
+
+<h3>
+Coach Champion
+</h3>
+
+<p>
+Advanced coach. Improve calculation,
+planning and endgame technique.
+</p>
+
+<button onclick="showLesson('Always calculate your opponent’s strongest reply.')">
+Learn
+</button>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>
+📚 Coach Lesson
+</h2>
+
+<p id="lessonText">
+Choose a coach above to start a lesson.
+</p>
+
+</div>
+
+</section>
+
+
+<!-- PUZZLES -->
+
+<section id="puzzles" class="page">
+
+<h2 style="text-align:center;">
+🧩 Chess Puzzles
+</h2>
+
+
+<div class="puzzles">
+
+<div class="puzzle">
+
+<h3>
+Puzzle 1
+</h3>
+
+<p>
+You are in a position where your opponent's king is exposed.
+What should you look for first?
+</p>
+
+<button onclick="puzzleAnswer(1)">
+Show Hint
+</button>
+
+</div>
+
+
+<div class="puzzle">
+
+<h3>
+Puzzle 2
+</h3>
+
+<p>
+Your opponent has two pieces lined up.
+Can you attack both with one knight move?
+</p>
+
+<button onclick="puzzleAnswer(2)">
+Show Hint
+</button>
+
+</div>
+
+
+<div class="puzzle">
+
+<h3>
+Training Tip
+</h3>
+
+<p>
+In every position ask:
+</p>
+
+<p>
+<strong>
+Checks → Captures → Threats
+</strong>
+</p>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<p id="puzzleResult">
+Choose a puzzle to receive a hint.
+</p>
+
+</div>
+
+</section>
+
+
+<!-- STATS -->
+
+<section id="stats" class="page">
+
+<h2>
+📊 My Chess Stats
+</h2>
+
+
+<div class="card">
+
+<p>
+Games played:
+<strong id="gamesPlayed">
+0
+</strong>
+</p>
+
+
+<p>
+Games won:
+<strong id="gamesWon">
+0
+</strong>
+</p>
+
+
+<p>
+Games lost:
+<strong id="gamesLost">
+0
+</strong>
+</p>
+
+
+<p>
+Draws:
+<strong id="gamesDrawn">
+0
+</strong>
+</p>
+
+
+<button onclick="resetStats()">
+Reset Stats
+</button>
+
+</div>
+
+</section>
+
+
+<!-- ONLINE -->
+
+<section id="online" class="page">
+
+<div class="hero">
+
+<h2>
+🌐 Online Multiplayer
+</h2>
+
+<p>
+This is the future multiplayer section of INVO CHESS.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h3>
+🚧 Multiplayer Server
+</h3>
+
+<p>
+Real-time multiplayer requires a server so two different
+devices can communicate with each other.
+</p>
+
+<p>
+The current website is prepared for multiplayer,
+but this feature requires a backend/server connection.
+</p>
+
+<p>
+Future features:
+</p>
+
+<ul>
+
+<li>
+👥 Create a room
+</li>
+
+<li>
+🔗 Invite a friend
+</li>
+
+<li>
+🏆 Online ratings
+</li>
+
+<li>
+💬 Game chat
+</li>
+
+<li>
+🌐 Real-time games
+</li>
+
+</ul>
+
+</div>
+
+</section>
+
+
+<!-- SUPPORT -->
 
 <section id="support" class="page">
 
-    <div class="hero">
+<div class="hero">
 
-        <h2>❤️ Support INVO CHESS</h2>
+<h2>
+❤️ Support INVO CHESS
+</h2>
 
-        <p>
-            Enjoying INVO CHESS? You can support the project
-            and help me keep improving it!
-        </p>
+<p>
+Enjoying INVO CHESS?
+You can support the project and help it grow!
+</p>
 
-    </div>
+</div>
 
-    <div class="card donation-box">
 
-        <div class="big-icon">♟️❤️</div>
+<div class="card donation-box">
 
-        <h2>Support the Developer</h2>
+<div class="big-icon">
+♟️❤️
+</div>
 
-        <p>
-            INVO CHESS is an independent project.
-            Your support can help with future development,
-            better features and improvements.
-        </p>
+<h2>
+Support INVO CHESS
+</h2>
 
-        <div class="donation-message">
-            💛 Thank you for supporting INVO CHESS!
-        </div>
+<p>
+INVO CHESS is an independent chess project.
+Your support can help with future development,
+new features and improvements.
+</p>
 
-        <!-- Your parent/guardian can place an official
-             donation/payment link here later. -->
 
-        <button onclick="showDonationMessage()">
-            ❤️ Support INVO CHESS
-        </button>
+<div class="donation-message">
 
-        <p id="donationMessage"></p>
+💛 Every bit of support means a lot!
 
-    </div>
+</div>
+
+
+<button onclick="showDonationMessage()">
+❤️ Support INVO CHESS
+</button>
+
+
+<p id="donationMessage"></p>
+
+</div>
 
 </section>
+
+
+<!-- ABOUT -->
+
+<section id="about" class="page">
+
+<div class="hero">
+
+<h2>
+ℹ️ About INVO CHESS
+</h2>
+
+<p>
+INVO CHESS is an original chess project created by Invo.
+</p>
+
+<h3>
+🚀 Future Plans
+</h3>
+
+<p>
+Smarter AI<br>
+Online multiplayer<br>
+Player accounts<br>
+Leaderboards<br>
+Chess tournaments<br>
+Mobile applications
+</p>
+
+</div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+<p>
+♟ INVO CHESS
+</p>
+
+<p>
+Made by <strong>Invo</strong>
+</p>
+
+</footer>
+
+
+<script>
+
+let game = new Chess();
+
+let selectedSquare = null;
+
+let mode = "computer";
+
+let gameTime = 600;
+
+let whiteTime = gameTime;
+
+let blackTime = gameTime;
+
+let timer = null;
+
+let gameStarted = false;
+
+
+let stats =
+JSON.parse(
+localStorage.getItem("invoChessStats")
+) || {
+
+    played: 0,
+    won: 0,
+    lost: 0,
+    drawn: 0
+
+};
+
+
+/* PIECES */
+
+const pieces = {
+
+w: {
+p:"♙",
+n:"♘",
+b:"♗",
+r:"♖",
+q:"♕",
+k:"♔"
+},
+
+b: {
+p:"♟",
+n:"♞",
+b:"♝",
+r:"♜",
+q:"♛",
+k:"♚"
+}
+
+};
+
+
+/* PAGE SYSTEM */
+
+function showPage(id) {
+
+document
+.querySelectorAll(".page")
+.forEach(p => {
+
+p.classList.remove("active");
+
+});
+
+
+document
+.getElementById(id)
+.classList.add("active");
+
+
+if(id === "game") {
+
+renderBoard();
+
+}
+
+
+if(id === "stats") {
+
+updateStats();
+
+}
+
+}
+
+
+/* BOARD */
+
+function renderBoard() {
+
+const board =
+document.getElementById("board");
+
+board.innerHTML = "";
+
+
+const position =
+game.board();
+
+
+for(let row=0; row<8; row++) {
+
+for(let col=0; col<8; col++) {
+
+
+const square =
+document.createElement("div");
+
+
+const file =
+String.fromCharCode(97 + col);
+
+const rank =
+8-row;
+
+const name =
+file + rank;
+
+
+square.className =
+"square " +
+(
+(row+col)%2===0
+? "light"
+: "dark"
+);
+
+
+square.dataset.square =
+name;
+
+
+if(selectedSquare === name) {
+
+square.classList.add(
+"selected"
+);
+
+}
+
+
+const piece =
+position[row][col];
+
+
+if(piece) {
+
+const span =
+document.createElement("span");
+
+span.className =
+"piece";
+
+span.textContent =
+pieces[
+piece.color
+][
+piece.type
+];
+
+square.appendChild(span);
+
+}
+
+
+if(selectedSquare) {
+
+
+const moves =
+game.moves({
+
+square:selectedSquare,
+
+verbose:true
+
+});
+
+
+const possible =
+moves.find(
+m => m.to === name
+);
+
+
+if(possible) {
+
+
+if(possible.captured) {
+
+square.classList.add(
+"capture"
+);
+
+} else {
+
+square.classList.add(
+"move"
+);
+
+}
+
+}
+
+}
+
+
+square.onclick =
+() => {
+
+clickSquare(name);
+
+};
+
+
+board.appendChild(square);
+
+}
+
+}
+
+
+updateStatus();
+
+}
+
+
+/* CLICK */
+
+function clickSquare(square) {
+
+if(game.isGameOver()) {
+
+return;
+
+}
+
+
+if(
+mode==="computer" &&
+game.turn()==="b"
+) {
+
+return;
+
+}
+
+
+const piece =
+game.get(square);
+
+
+if(!selectedSquare) {
+
+
+if(!piece) return;
+
+
+if(
+piece.color !==
+game.turn()
+) {
+
+return;
+
+}
+
+
+selectedSquare =
+square;
+
+
+renderBoard();
+
+return;
+
+}
+
+
+try {
+
+
+const move =
+game.move({
+
+from:selectedSquare,
+
+to:square,
+
+promotion:"q"
+
+});
+
+
+if(move) {
+
+
+selectedSquare =
+null;
+
+
+if(!gameStarted) {
+
+startClock();
+
+gameStarted = true;
+
+}
+
+
+recordPosition();
+
+renderBoard();
+
+
+if(game.isGameOver()) {
+
+finishGame();
+
+return;
+
+}
+
+
+if(
+mode==="computer" &&
+game.turn()==="b"
+) {
+
+setTimeout(
+computerMove,
+500
+);
+
+}
+
+
+return;
+
+}
+
+} catch(e) {}
+
+
+/* SELECT ANOTHER PIECE */
+
+if(
+piece &&
+piece.color ===
+game.turn()
+) {
+
+selectedSquare =
+square;
+
+} else {
+
+selectedSquare =
+null;
+
+}
+
+
+renderBoard();
+
+}
+
+
+/* COMPUTER */
+
+function computerMove() {
+
+if(game.isGameOver()) {
+
+return;
+
+}
+
+
+const moves =
+game.moves({
+verbose:true
+});
+
+
+if(moves.length===0) {
+
+return;
+
+}
+
+
+let bestMove = null;
+
+let bestScore = -Infinity;
+
+
+for(const move of moves) {
+
+
+game.move({
+
+from:move.from,
+
+to:move.to,
+
+promotion:"q"
+
+});
+
+
+let score =
+evaluatePosition(game);
+
+
+game.undo();
+
+
+if(score > bestScore) {
+
+bestScore = score;
+
+bestMove = move;
+
+}
+
+}
+
+
+if(!bestMove) {
+
+bestMove =
+moves[
+Math.floor(
+Math.random()*moves.length
+)
+];
+
+}
+
+
+game.move({
+
+from:bestMove.from,
+
+to:bestMove.to,
+
+promotion:"q"
+
+});
+
+
+recordPosition();
+
+renderBoard();
+
+
+if(game.isGameOver()) {
+
+finishGame();
+
+}
+
+}
+
+
+/* AI */
+
+function evaluatePosition(position) {
+
+const values = {
+
+p:100,
+n:320,
+b:330,
+r:500,
+q:900,
+k:20000
+
+};
+
+
+let score = 0;
+
+
+const board =
+position.board();
+
+
+for(const row of board) {
+
+for(const piece of row) {
+
+if(!piece) continue;
+
+
+const value =
+values[piece.type];
+
+
+if(piece.color==="b") {
+
+score += value;
+
+} else {
+
+score -= value;
+
+}
+
+}
+
+}
+
+
+return score +
+Math.random()*5;
+
+}
+
+
+/* UNDO */
+
+function undoMove() {
+
+if(game.history().length===0) {
+
+return;
+
+}
+
+
+game.undo();
+
+
+if(
+mode==="computer" &&
+game.history().length>0
+) {
+
+game.undo();
+
+}
+
+
+selectedSquare =
+null;
+
+
+renderBoard();
+
+}
+
+
+/* NEW GAME */
+
+function newGame() {
+
+stopClock();
+
+game =
+new Chess();
+
+selectedSquare =
+null;
+
+whiteTime =
+gameTime;
+
+blackTime =
+gameTime;
+
+gameStarted =
+false;
+
+
+document
+.getElementById("hintBox")
+.textContent = "";
+
+
+updateClock();
+
+renderBoard();
+
+}
+
+
+/* MODE */
+
+function setMode(newMode) {
+
+mode =
+newMode;
+
+
+document
+.getElementById("modeText")
+.textContent =
+newMode==="computer"
+? "Computer"
+: "Two Players";
+
+
+newGame();
+
+}
+
+
+/* TIME */
+
+function changeTime() {
+
+gameTime =
+parseInt(
+document
+.getElementById("timeSelect")
+.value
+);
+
+
+newGame();
+
+}
+
+
+/* CLOCK */
+
+function startClock() {
+
+stopClock();
+
+
+timer =
+setInterval(() => {
+
+
+if(game.isGameOver()) {
+
+stopClock();
+
+return;
+
+}
+
+
+if(game.turn()==="w") {
+
+whiteTime--;
+
+} else {
+
+blackTime--;
+
+}
+
+
+updateClock();
+
+
+if(whiteTime<=0) {
+
+whiteTime=0;
+
+stopClock();
+
+alert(
+"⏰ White's time is over!"
+);
+
+finishGame();
+
+}
+
+
+if(blackTime<=0) {
+
+blackTime=0;
+
+stopClock();
+
+alert(
+"⏰ Black's time is over!"
+);
+
+finishGame();
+
+}
+
+
+},1000);
+
+}
+
+
+function stopClock() {
+
+if(timer) {
+
+clearInterval(timer);
+
+timer=null;
+
+}
+
+}
+
+
+function updateClock() {
+
+document
+.getElementById("whiteClock")
+.textContent =
+formatTime(whiteTime);
+
+
+document
+.getElementById("blackClock")
+.textContent =
+formatTime(blackTime);
+
+}
+
+
+function formatTime(seconds) {
+
+const min =
+Math.floor(seconds/60);
+
+const sec =
+seconds%60;
+
+
+return min +
+":" +
+String(sec)
+.padStart(2,"0");
+
+}
+
+
+/* STATUS */
+
+function updateStatus() {
+
+const status =
+document.getElementById("status");
+
+
+const turn =
+document.getElementById("turnText");
+
+
+turn.textContent =
+game.turn()==="w"
+? "White"
+: "Black";
+
+
+if(game.isCheckmate()) {
+
+
+const winner =
+game.turn()==="w"
+? "Black"
+: "White";
+
+
+status.textContent =
+"🏆 Checkmate! " +
+winner +
+" wins!";
+
+
+return;
+
+}
+
+
+if(game.isDraw()) {
+
+status.textContent =
+"🤝 Draw!";
+
+return;
+
+}
+
+
+if(game.inCheck()) {
+
+
+status.textContent =
+"⚠️ Check! " +
+(
+game.turn()==="w"
+? "White"
+: "Black"
+) +
+" is in check.";
+
+
+return;
+
+}
+
+
+status.textContent =
+(
+game.turn()==="w"
+? "White"
+: "Black"
+) +
+" to move.";
+
+}
+
+
+/* FINISH */
+
+function finishGame() {
+
+stopClock();
+
+
+stats.played++;
+
+
+if(game.isDraw()) {
+
+stats.drawn++;
+
+}
+
+
+else if(game.isCheckmate()) {
+
+
+const winner =
+game.turn()==="w"
+? "Black"
+: "White";
+
+
+if(mode==="computer") {
+
+
+if(winner==="White") {
+
+stats.won++;
+
+} else {
+
+stats.lost++;
+
+}
+
+}
+
+}
+
+
+saveStats();
+
+updateStats();
+
+}
+
+
+/* STATS */
+
+function saveStats() {
+
+localStorage.setItem(
+"invoChessStats",
+JSON.stringify(stats)
+);
+
+}
+
+
+function updateStats() {
+
+document
+.getElementById("gamesPlayed")
+.textContent =
+stats.played;
+
+
+document
+.getElementById("gamesWon")
+.textContent =
+stats.won;
+
+
+document
+.getElementById("gamesLost")
+.textContent =
+stats.lost;
+
+
+document
+.getElementById("gamesDrawn")
+.textContent =
+stats.drawn;
+
+}
+
+
+function resetStats() {
+
+stats = {
+
+played:0,
+won:0,
+lost:0,
+drawn:0
+
+};
+
+
+saveStats();
+
+updateStats();
+
+}
+
+
+/* HINT */
+
+function giveHint() {
+
+const moves =
+game.moves({
+verbose:true
+});
+
+
+if(moves.length===0) {
+
+
+document
+.getElementById("hintBox")
+.textContent =
+"No moves available.";
+
+
+return;
+
+}
+
+
+const move =
+moves[
+Math.floor(
+Math.random()*moves.length
+)
+];
+
+
+document
+.getElementById("hintBox")
+.textContent =
+"💡 Try: " +
+move.from.toUpperCase() +
+" → " +
+move.to.toUpperCase();
+
+}
+
+
+/* LESSONS */
+
+function showLesson(text) {
+
+document
+.getElementById("lessonText")
+.textContent =
+text;
+
+}
+
+
+/* PUZZLES */
+
+function puzzleAnswer(number) {
+
+const result =
+document
+.getElementById("puzzleResult");
+
+
+if(number===1) {
+
+result.textContent =
+"💡 Hint: Look for a forcing move, especially a check.";
+
+}
+
+
+if(number===2) {
+
+result.textContent =
+"💡 Hint: A knight can attack two pieces at once with a fork.";
+
+}
+
+}
+
+
+/* SUPPORT BUTTON */
+
+function showDonationMessage() {
+
+document
+.getElementById("donationMessage")
+.textContent =
+"❤️ Thank you for supporting INVO CHESS!";
+
+}
+
+
+/* FUTURE */
+
+function recordPosition() {
+
+}
+
+
+/* START */
+
+updateClock();
+
+renderBoard();
+
+updateStats();
+
+</script>
+
+</body>
+</html>
