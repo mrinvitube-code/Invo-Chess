@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>INVO CHESS v3</title>
+<title>INVO CHESS v4</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chess.js@1.4.0/dist/chess.min.js"></script>
 
@@ -12,203 +12,558 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #08111f, #172554, #111827);
-    color: white;
+    font-family: Georgia, "Times New Roman", serif;
+    color: #f5f5f5;
     min-height: 100vh;
+
+    background:
+        radial-gradient(circle at 15% 15%, rgba(255,255,255,.08), transparent 25%),
+        radial-gradient(circle at 85% 80%, rgba(120,70,25,.18), transparent 30%),
+        linear-gradient(135deg, #090909, #17120d, #0b0b0b);
+
+    background-size: 200% 200%;
+    animation: backgroundMove 18s ease infinite;
 }
+
+@keyframes backgroundMove {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Subtle background texture */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+
+    background-image:
+        repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,.015) 0px,
+            rgba(255,255,255,.015) 1px,
+            transparent 1px,
+            transparent 5px
+        );
+
+    opacity: .35;
+    z-index: -1;
+}
+
+/* HEADER */
 
 header {
     text-align: center;
-    padding: 25px 15px;
-    background: rgba(0,0,0,.4);
+    padding: 28px 15px;
+
+    background:
+        linear-gradient(
+            rgba(0,0,0,.85),
+            rgba(20,15,10,.8)
+        );
+
+    border-bottom: 2px solid #6f4e2f;
+
+    box-shadow:
+        0 5px 25px rgba(0,0,0,.7);
 }
 
 header h1 {
     margin: 0;
-    color: #ffd43b;
-    font-size: 42px;
-    text-shadow: 3px 3px #000;
+
+    color: #d9a441;
+
+    font-size: 44px;
+
+    letter-spacing: 2px;
+
+    text-shadow:
+        2px 3px 0 #000,
+        0 0 15px rgba(217,164,65,.25);
 }
 
 header p {
-    color: #ddd;
+    color: #cfcfcf;
+    margin-bottom: 0;
 }
+
+/* NAVIGATION */
 
 nav {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
     gap: 8px;
-    padding: 15px;
-    background: rgba(0,0,0,.3);
+
+    padding: 14px;
+
+    background: rgba(0,0,0,.7);
+
+    border-bottom: 1px solid #3b2a1b;
+
+    backdrop-filter: blur(8px);
 }
 
 button {
-    border: 0;
-    border-radius: 10px;
+    border: 1px solid #7a582f;
+
+    border-radius: 8px;
+
     padding: 11px 16px;
+
     font-weight: bold;
+
     cursor: pointer;
-    background: #ffd43b;
-    color: #111;
+
+    background:
+        linear-gradient(
+            #d9a441,
+            #a87528
+        );
+
+    color: #17100a;
+
     margin: 3px;
+
+    box-shadow:
+        inset 0 1px rgba(255,255,255,.3),
+        0 3px 8px rgba(0,0,0,.5);
+
+    transition: .18s;
 }
 
 button:hover {
-    transform: scale(1.04);
+    transform: translateY(-2px);
+
+    background:
+        linear-gradient(
+            #edbd55,
+            #b9802e
+        );
+
+    box-shadow:
+        0 5px 15px rgba(0,0,0,.6);
 }
+
+button:active {
+    transform: translateY(1px);
+}
+
+/* PAGES */
 
 .page {
     display: none;
+
     max-width: 1200px;
+
     margin: auto;
-    padding: 25px 15px;
+
+    padding: 28px 15px;
 }
 
 .page.active {
     display: block;
 }
 
+/* HERO */
+
 .hero {
     text-align: center;
-    padding: 35px 10px;
+    padding: 38px 10px;
 }
 
 .hero h2 {
-    font-size: 38px;
+    font-size: 40px;
+
+    color: #d9a441;
+
+    text-shadow:
+        2px 2px #000;
+}
+
+/* CARDS */
+
+.card,
+.game-info {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.07),
+            rgba(0,0,0,.35)
+        );
+
+    border: 1px solid #4d3824;
+
+    border-radius: 15px;
+
+    padding: 20px;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.45),
+        inset 0 1px rgba(255,255,255,.05);
+
+    backdrop-filter: blur(7px);
 }
 
 .card {
-    background: rgba(255,255,255,.08);
-    border-radius: 18px;
-    padding: 20px;
     margin: 15px 0;
 }
 
 .game-layout {
     display: flex;
+
     justify-content: center;
+
     align-items: flex-start;
-    gap: 25px;
+
+    gap: 30px;
+
     flex-wrap: wrap;
 }
 
+/* =========================
+   REALISTIC CHESS BOARD
+========================= */
+
 #board {
-    width: min(90vw, 560px);
-    height: min(90vw, 560px);
+    width: min(90vw, 600px);
+    height: min(90vw, 600px);
+
     display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    border: 6px solid #080808;
-    box-shadow: 0 15px 35px rgba(0,0,0,.5);
+
+    grid-template-columns:
+        repeat(8, 1fr);
+
+    border: 12px solid #3b2413;
+
+    border-radius: 7px;
+
+    overflow: hidden;
+
+    background: #3b2413;
+
+    box-shadow:
+        0 8px 0 #241508,
+        0 18px 30px rgba(0,0,0,.8),
+        0 0 40px rgba(0,0,0,.5);
+
+    position: relative;
 }
+
+/* Board inner frame */
+
+#board::after {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    border: 2px solid rgba(255,255,255,.12);
+
+    z-index: 10;
+}
+
+/* SQUARES */
 
 .square {
     aspect-ratio: 1;
+
     display: flex;
+
     align-items: center;
+
     justify-content: center;
+
     position: relative;
+
     cursor: pointer;
+
     user-select: none;
+
+    transition:
+        filter .15s,
+        transform .1s;
 }
+
+/* Light wood */
 
 .light {
-    background: #f0d9b5;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,.025) 0px,
+            rgba(255,255,255,.025) 2px,
+            transparent 2px,
+            transparent 9px
+        ),
+        linear-gradient(
+            135deg,
+            #e8c99b,
+            #cda875
+        );
 }
+
+/* Dark wood */
 
 .dark {
-    background: #b58863;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,.018) 0px,
+            rgba(255,255,255,.018) 2px,
+            transparent 2px,
+            transparent 10px
+        ),
+        linear-gradient(
+            135deg,
+            #8a5b37,
+            #603b22
+        );
 }
 
-.selected {
-    box-shadow: inset 0 0 0 5px #ffe600;
+.square:hover {
+    filter: brightness(1.12);
 }
+
+/* Selected */
+
+.selected {
+    box-shadow:
+        inset 0 0 0 5px #e7c45d,
+        inset 0 0 20px rgba(255,220,80,.35);
+
+    z-index: 4;
+}
+
+/* Move marker */
 
 .move::after {
     content: "";
+
     position: absolute;
-    width: 22%;
-    height: 22%;
+
+    width: 20%;
+    height: 20%;
+
     border-radius: 50%;
-    background: rgba(0,0,0,.35);
+
+    background:
+        rgba(30,20,10,.45);
+
+    box-shadow:
+        0 1px 4px rgba(0,0,0,.5);
 }
+
+/* Capture marker */
 
 .capture::after {
     content: "";
+
     position: absolute;
-    inset: 5px;
-    border: 5px solid rgba(220,30,30,.7);
+
+    inset: 6px;
+
+    border:
+        5px solid rgba(160,35,25,.75);
+
     border-radius: 50%;
+
+    box-shadow:
+        inset 0 0 8px rgba(0,0,0,.35),
+        0 0 5px rgba(0,0,0,.35);
 }
+
+/* =========================
+   CHESS PIECES
+========================= */
 
 .piece {
-    font-size: clamp(35px, 7vw, 65px);
-    z-index: 2;
+    font-size:
+        clamp(
+            35px,
+            7vw,
+            70px
+        );
+
+    z-index: 3;
+
     line-height: 1;
-    text-shadow: 2px 2px 2px rgba(0,0,0,.35);
+
+    user-select: none;
+
+    transform: translateY(-1px);
+
+    transition:
+        transform .12s,
+        filter .12s;
+
+    filter:
+        drop-shadow(
+            3px 5px 2px rgba(0,0,0,.55)
+        );
 }
 
+.square:hover .piece {
+    transform:
+        translateY(-3px)
+        scale(1.03);
+}
+
+/* White pieces */
+
+.light .piece,
+.dark .piece {
+    text-shadow:
+        1px 1px 0 #fff,
+        -1px -1px 0 #aaa,
+        2px 3px 3px rgba(0,0,0,.65);
+}
+
+/* Game info */
+
 .game-info {
-    width: 320px;
-    background: rgba(255,255,255,.08);
-    border-radius: 18px;
-    padding: 20px;
+    width: 330px;
 }
 
 .game-info h2,
 .card h2 {
-    color: #ffd43b;
+    color: #d9a441;
+
+    text-shadow:
+        1px 1px #000;
 }
 
 .status {
     padding: 14px;
-    border-radius: 10px;
-    background: rgba(0,0,0,.35);
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(0,0,0,.65),
+            rgba(40,25,15,.5)
+        );
+
+    border: 1px solid #4c3823;
+
     margin: 10px 0;
+
     font-weight: bold;
 }
 
+/* CLOCKS */
+
 .clock-area {
     display: flex;
+
     gap: 10px;
 }
 
 .clock {
     flex: 1;
+
     text-align: center;
-    padding: 12px;
-    background: rgba(0,0,0,.4);
-    border-radius: 10px;
+
+    padding: 14px;
+
+    background:
+        linear-gradient(
+            #17110c,
+            #080706
+        );
+
+    border:
+        1px solid #4d3823;
+
+    border-radius: 9px;
+
+    box-shadow:
+        inset 0 2px 8px rgba(0,0,0,.7);
 }
 
 .clock strong {
     display: block;
-    font-size: 25px;
-    color: #ffd43b;
+
+    font-size: 27px;
+
+    color: #e4bd62;
+
+    margin-top: 4px;
 }
+
+/* OTHER SECTIONS */
 
 .coaches,
 .puzzles,
 .features {
     display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(220px,1fr)
+        );
+
     gap: 18px;
 }
 
 .coach,
 .puzzle,
 .feature {
-    background: rgba(255,255,255,.08);
-    border-radius: 16px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.06),
+            rgba(0,0,0,.35)
+        );
+
+    border:
+        1px solid #4a3521;
+
+    border-radius: 14px;
+
     padding: 20px;
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,.35);
+
+    transition: .2s;
+}
+
+.coach:hover,
+.puzzle:hover,
+.feature:hover {
+    transform: translateY(-4px);
+
+    border-color: #79582f;
+
+    box-shadow:
+        0 12px 25px rgba(0,0,0,.5);
 }
 
 .coach h3,
 .feature h3 {
-    color: #ffd43b;
+    color: #d9a441;
 }
 
 .big-icon {
@@ -218,29 +573,53 @@ button:hover {
 input,
 select {
     padding: 10px;
-    border-radius: 8px;
-    border: none;
+
+    border-radius: 7px;
+
+    border:
+        1px solid #60472a;
+
     margin: 5px;
+
+    background: #16110c;
+
+    color: white;
 }
 
+/* HINT */
+
 #hintBox {
-    color: #ffe66d;
+    color: #e9ca69;
+
     min-height: 25px;
 }
 
+/* FOOTER */
+
 footer {
     text-align: center;
+
     padding: 30px;
-    background: rgba(0,0,0,.35);
-    color: #ccc;
+
+    background:
+        rgba(0,0,0,.55);
+
+    color: #aaa;
+
     margin-top: 30px;
+
+    border-top:
+        1px solid #3d2b1a;
 }
 
 footer strong {
-    color: #ffd43b;
+    color: #d9a441;
 }
 
+/* MOBILE */
+
 @media(max-width:700px) {
+
     header h1 {
         font-size: 31px;
     }
@@ -248,9 +627,18 @@ footer strong {
     .game-info {
         width: 90vw;
     }
+
+    .hero h2 {
+        font-size: 30px;
+    }
+
+    #board {
+        border-width: 7px;
+    }
 }
 </style>
 </head>
+
 
 <body>
 
@@ -259,56 +647,133 @@ footer strong {
     <p>Play • Learn • Improve • Challenge</p>
 </header>
 
+
 <nav>
-    <button onclick="showPage('home')">🏠 Home</button>
-    <button onclick="showPage('game')">♟ Play</button>
-    <button onclick="showPage('coaches')">🎓 Coaches</button>
-    <button onclick="showPage('puzzles')">🧩 Puzzles</button>
-    <button onclick="showPage('stats')">📊 Stats</button>
-    <button onclick="showPage('online')">🌐 Online</button>
-    <button onclick="showPage('about')">ℹ️ About</button>
+
+<button onclick="showPage('home')">
+🏠 Home
+</button>
+
+<button onclick="showPage('game')">
+♟ Play
+</button>
+
+<button onclick="showPage('coaches')">
+🎓 Coaches
+</button>
+
+<button onclick="showPage('puzzles')">
+🧩 Puzzles
+</button>
+
+<button onclick="showPage('stats')">
+📊 Stats
+</button>
+
+<button onclick="showPage('online')">
+🌐 Online
+</button>
+
+<button onclick="showPage('about')">
+ℹ️ About
+</button>
+
 </nav>
+
+
+<!-- HOME -->
 
 <section id="home" class="page active">
 
 <div class="hero">
 
-<h2>Welcome to INVO CHESS!</h2>
+<h2>
+Welcome to INVO CHESS!
+</h2>
 
 <p>
 A chess project created by Invo.
 Play chess, train your skills and become a better player.
 </p>
 
-<button onclick="showPage('game')">♟ START PLAYING</button>
-<button onclick="showPage('coaches')">🎓 LEARN CHESS</button>
+<button onclick="showPage('game')">
+♟ START PLAYING
+</button>
+
+<button onclick="showPage('coaches')">
+🎓 LEARN CHESS
+</button>
 
 </div>
+
 
 <div class="features">
 
 <div class="feature">
-<div class="big-icon">🤖</div>
-<h3>Smart Computer</h3>
-<p>Challenge a simple built-in chess AI.</p>
+
+<div class="big-icon">
+🤖
 </div>
 
-<div class="feature">
-<div class="big-icon">⏱️</div>
-<h3>Chess Clocks</h3>
-<p>Play 5, 10 or 15 minute games.</p>
+<h3>
+Smart Computer
+</h3>
+
+<p>
+Challenge a simple built-in chess AI.
+</p>
+
 </div>
 
-<div class="feature">
-<div class="big-icon">🎓</div>
-<h3>Coaches</h3>
-<p>Learn opening, tactics, strategy and endgames.</p>
-</div>
 
 <div class="feature">
-<div class="big-icon">🧩</div>
-<h3>Puzzles</h3>
-<p>Practice chess tactics.</p>
+
+<div class="big-icon">
+⏱️
+</div>
+
+<h3>
+Chess Clocks
+</h3>
+
+<p>
+Play 5, 10 or 15 minute games.
+</p>
+
+</div>
+
+
+<div class="feature">
+
+<div class="big-icon">
+🎓
+</div>
+
+<h3>
+Coaches
+</h3>
+
+<p>
+Learn opening, tactics, strategy and endgames.
+</p>
+
+</div>
+
+
+<div class="feature">
+
+<div class="big-icon">
+🧩
+</div>
+
+<h3>
+Puzzles
+</h3>
+
+<p>
+Practice chess tactics.
+</p>
+
 </div>
 
 </div>
@@ -316,81 +781,137 @@ Play chess, train your skills and become a better player.
 </section>
 
 
+<!-- GAME -->
+
 <section id="game" class="page">
 
-<h2 style="text-align:center;">♟ INVO CHESS ARENA</h2>
+<h2 style="text-align:center;">
+♟ INVO CHESS ARENA
+</h2>
+
 
 <div class="game-layout">
 
 <div>
+
 <div id="board"></div>
+
 </div>
+
 
 <div class="game-info">
 
-<h2>Game Controls</h2>
+<h2>
+Game Controls
+</h2>
+
 
 <div class="status" id="status">
 White to move
 </div>
 
+
 <div class="clock-area">
 
 <div class="clock">
+
 White
-<strong id="whiteClock">10:00</strong>
+
+<strong id="whiteClock">
+10:00
+</strong>
+
 </div>
+
 
 <div class="clock">
+
 Black
-<strong id="blackClock">10:00</strong>
+
+<strong id="blackClock">
+10:00
+</strong>
+
 </div>
 
 </div>
+
 
 <br>
 
-<label>Game Time:</label>
+
+<label>
+Game Time:
+</label>
+
 
 <select id="timeSelect" onchange="changeTime()">
-<option value="300">5 Minutes</option>
-<option value="600" selected>10 Minutes</option>
-<option value="900">15 Minutes</option>
+
+<option value="300">
+5 Minutes
+</option>
+
+<option value="600" selected>
+10 Minutes
+</option>
+
+<option value="900">
+15 Minutes
+</option>
+
 </select>
 
+
 <br>
+
 
 <button onclick="setMode('computer')">
 🤖 Computer
 </button>
 
+
 <button onclick="setMode('friend')">
 👥 Friend
 </button>
 
+
 <br>
+
 
 <button onclick="newGame()">
 🔄 New Game
 </button>
 
+
 <button onclick="undoMove()">
 ↩ Undo
 </button>
+
 
 <button onclick="giveHint()">
 💡 Hint
 </button>
 
+
 <p>
 <b>Mode:</b>
-<span id="modeText">Computer</span>
+
+<span id="modeText">
+Computer
+</span>
+
 </p>
+
 
 <p>
 <b>Turn:</b>
-<span id="turnText">White</span>
+
+<span id="turnText">
+White
+</span>
+
 </p>
+
 
 <div id="hintBox"></div>
 
@@ -401,17 +922,26 @@ Black
 </section>
 
 
+<!-- COACHES -->
+
 <section id="coaches" class="page">
 
-<h2 style="text-align:center;">🎓 INVO CHESS COACHES</h2>
+<h2 style="text-align:center;">
+🎓 INVO CHESS COACHES
+</h2>
+
 
 <div class="coaches">
 
 <div class="coach">
 
-<div class="big-icon">🧠</div>
+<div class="big-icon">
+🧠
+</div>
 
-<h3>Coach Alpha</h3>
+<h3>
+Coach Alpha
+</h3>
 
 <p>
 Beginner coach. Learn how every chess piece moves,
@@ -427,9 +957,13 @@ Learn
 
 <div class="coach">
 
-<div class="big-icon">⚔️</div>
+<div class="big-icon">
+⚔️
+</div>
 
-<h3>Coach Knight</h3>
+<h3>
+Coach Knight
+</h3>
 
 <p>
 Tactical coach. Learn forks, pins, skewers,
@@ -445,9 +979,13 @@ Learn
 
 <div class="coach">
 
-<div class="big-icon">👑</div>
+<div class="big-icon">
+👑
+</div>
 
-<h3>Coach King</h3>
+<h3>
+Coach King
+</h3>
 
 <p>
 Strategy coach. Learn king safety,
@@ -463,9 +1001,13 @@ Learn
 
 <div class="coach">
 
-<div class="big-icon">🏆</div>
+<div class="big-icon">
+🏆
+</div>
 
-<h3>Coach Champion</h3>
+<h3>
+Coach Champion
+</h3>
 
 <p>
 Advanced coach. Improve calculation,
@@ -480,9 +1022,12 @@ Learn
 
 </div>
 
+
 <div class="card">
 
-<h2>📚 Coach Lesson</h2>
+<h2>
+📚 Coach Lesson
+</h2>
 
 <p id="lessonText">
 Choose a coach above to start a lesson.
@@ -493,15 +1038,22 @@ Choose a coach above to start a lesson.
 </section>
 
 
+<!-- PUZZLES -->
+
 <section id="puzzles" class="page">
 
-<h2 style="text-align:center;">🧩 Chess Puzzles</h2>
+<h2 style="text-align:center;">
+🧩 Chess Puzzles
+</h2>
+
 
 <div class="puzzles">
 
 <div class="puzzle">
 
-<h3>Puzzle 1</h3>
+<h3>
+Puzzle 1
+</h3>
 
 <p>
 You are in a position where your opponent's king is exposed.
@@ -517,7 +1069,9 @@ Show Hint
 
 <div class="puzzle">
 
-<h3>Puzzle 2</h3>
+<h3>
+Puzzle 2
+</h3>
 
 <p>
 Your opponent has two pieces lined up.
@@ -533,7 +1087,9 @@ Show Hint
 
 <div class="puzzle">
 
-<h3>Training Tip</h3>
+<h3>
+Training Tip
+</h3>
 
 <p>
 In every position ask:
@@ -549,6 +1105,7 @@ Checks → Captures → Threats
 
 </div>
 
+
 <div class="card">
 
 <p id="puzzleResult">
@@ -560,31 +1117,48 @@ Choose a puzzle to receive a hint.
 </section>
 
 
+<!-- STATS -->
+
 <section id="stats" class="page">
 
-<h2>📊 My Chess Stats</h2>
+<h2>
+📊 My Chess Stats
+</h2>
+
 
 <div class="card">
 
 <p>
 Games played:
-<strong id="gamesPlayed">0</strong>
+<strong id="gamesPlayed">
+0
+</strong>
 </p>
+
 
 <p>
 Games won:
-<strong id="gamesWon">0</strong>
+<strong id="gamesWon">
+0
+</strong>
 </p>
+
 
 <p>
 Games lost:
-<strong id="gamesLost">0</strong>
+<strong id="gamesLost">
+0
+</strong>
 </p>
+
 
 <p>
 Draws:
-<strong id="gamesDrawn">0</strong>
+<strong id="gamesDrawn">
+0
+</strong>
 </p>
+
 
 <button onclick="resetStats()">
 Reset Stats
@@ -595,11 +1169,15 @@ Reset Stats
 </section>
 
 
+<!-- ONLINE -->
+
 <section id="online" class="page">
 
 <div class="hero">
 
-<h2>🌐 Online Multiplayer</h2>
+<h2>
+🌐 Online Multiplayer
+</h2>
 
 <p>
 This is the future multiplayer section of INVO CHESS.
@@ -607,9 +1185,12 @@ This is the future multiplayer section of INVO CHESS.
 
 </div>
 
+
 <div class="card">
 
-<h3>🚧 Multiplayer Server</h3>
+<h3>
+🚧 Multiplayer Server
+</h3>
 
 <p>
 Real-time multiplayer requires a server so two different
@@ -626,11 +1207,27 @@ Future features:
 </p>
 
 <ul>
-<li>👥 Create a room</li>
-<li>🔗 Invite a friend</li>
-<li>🏆 Online ratings</li>
-<li>💬 Game chat</li>
-<li>🌐 Real-time games</li>
+
+<li>
+👥 Create a room
+</li>
+
+<li>
+🔗 Invite a friend
+</li>
+
+<li>
+🏆 Online ratings
+</li>
+
+<li>
+💬 Game chat
+</li>
+
+<li>
+🌐 Real-time games
+</li>
+
 </ul>
 
 </div>
@@ -638,17 +1235,23 @@ Future features:
 </section>
 
 
+<!-- ABOUT -->
+
 <section id="about" class="page">
 
 <div class="hero">
 
-<h2>ℹ️ About INVO CHESS</h2>
+<h2>
+ℹ️ About INVO CHESS
+</h2>
 
 <p>
 INVO CHESS is an original chess project created by Invo.
 </p>
 
-<h3>🚀 Future Plans</h3>
+<h3>
+🚀 Future Plans
+</h3>
 
 <p>
 Smarter AI<br>
@@ -666,10 +1269,12 @@ Mobile applications
 
 <footer>
 
-<p>♟ INVO CHESS</p>
+<p>
+♟ INVO CHESS
+</p>
 
 <p>
-Made by <strong>Invo (Rudra PS Chauhan)</strong>
+Made by <strong>Invo</strong>
 </p>
 
 </footer>
@@ -693,15 +1298,21 @@ let timer = null;
 
 let gameStarted = false;
 
-let stats = JSON.parse(
-    localStorage.getItem("invoChessStats")
+
+let stats =
+JSON.parse(
+localStorage.getItem("invoChessStats")
 ) || {
+
     played: 0,
     won: 0,
     lost: 0,
     drawn: 0
+
 };
 
+
+/* PIECES */
 
 const pieces = {
 
@@ -726,67 +1337,113 @@ k:"♚"
 };
 
 
+/* PAGE SYSTEM */
+
 function showPage(id) {
 
-document.querySelectorAll(".page").forEach(p => {
+document
+.querySelectorAll(".page")
+.forEach(p => {
+
 p.classList.remove("active");
+
 });
 
-document.getElementById(id).classList.add("active");
+
+document
+.getElementById(id)
+.classList.add("active");
+
 
 if(id === "game") {
+
 renderBoard();
+
 }
+
 
 if(id === "stats") {
+
 updateStats();
-}
 
 }
 
+}
+
+
+/* BOARD */
 
 function renderBoard() {
 
-const board = document.getElementById("board");
+const board =
+document.getElementById("board");
 
 board.innerHTML = "";
 
-const position = game.board();
+
+const position =
+game.board();
+
 
 for(let row=0; row<8; row++) {
 
 for(let col=0; col<8; col++) {
 
-const square = document.createElement("div");
+
+const square =
+document.createElement("div");
+
 
 const file =
 String.fromCharCode(97 + col);
 
-const rank = 8-row;
+const rank =
+8-row;
 
-const name = file + rank;
+const name =
+file + rank;
+
 
 square.className =
 "square " +
-((row+col)%2===0 ? "light":"dark");
+(
+(row+col)%2===0
+? "light"
+: "dark"
+);
 
-square.dataset.square = name;
+
+square.dataset.square =
+name;
+
 
 if(selectedSquare === name) {
-square.classList.add("selected");
+
+square.classList.add(
+"selected"
+);
+
 }
 
-const piece = position[row][col];
+
+const piece =
+position[row][col];
+
 
 if(piece) {
 
 const span =
 document.createElement("span");
 
-span.className="piece";
+span.className =
+"piece";
 
 span.textContent =
-pieces[piece.color][piece.type];
+pieces[
+piece.color
+][
+piece.type
+];
 
 square.appendChild(span);
 
@@ -795,31 +1452,52 @@ square.appendChild(span);
 
 if(selectedSquare) {
 
+
 const moves =
 game.moves({
+
 square:selectedSquare,
+
 verbose:true
+
 });
 
+
 const possible =
-moves.find(m=>m.to===name);
+moves.find(
+m => m.to === name
+);
+
 
 if(possible) {
 
+
 if(possible.captured) {
-square.classList.add("capture");
+
+square.classList.add(
+"capture"
+);
+
 } else {
-square.classList.add("move");
-}
+
+square.classList.add(
+"move"
+);
 
 }
 
 }
 
+}
 
-square.onclick=()=>{
+
+square.onclick =
+() => {
+
 clickSquare(name);
+
 };
+
 
 board.appendChild(square);
 
@@ -827,32 +1505,56 @@ board.appendChild(square);
 
 }
 
+
 updateStatus();
 
 }
 
 
+/* CLICK */
+
 function clickSquare(square) {
 
 if(game.isGameOver()) {
+
 return;
+
 }
 
-if(mode==="computer" &&
-game.turn()==="b") {
+
+if(
+mode==="computer" &&
+game.turn()==="b"
+) {
+
 return;
+
 }
 
-const piece=game.get(square);
+
+const piece =
+game.get(square);
 
 
 if(!selectedSquare) {
 
+
 if(!piece) return;
 
-if(piece.color!==game.turn()) return;
 
-selectedSquare=square;
+if(
+piece.color !==
+game.turn()
+) {
+
+return;
+
+}
+
+
+selectedSquare =
+square;
+
 
 renderBoard();
 
@@ -863,7 +1565,9 @@ return;
 
 try {
 
-const move=game.move({
+
+const move =
+game.move({
 
 from:selectedSquare,
 
@@ -873,30 +1577,49 @@ promotion:"q"
 
 });
 
+
 if(move) {
 
-selectedSquare=null;
+
+selectedSquare =
+null;
+
 
 if(!gameStarted) {
+
 startClock();
-gameStarted=true;
+
+gameStarted = true;
+
 }
+
 
 recordPosition();
 
 renderBoard();
 
+
 if(game.isGameOver()) {
+
 finishGame();
+
 return;
-}
-
-if(mode==="computer" &&
-game.turn()==="b") {
-
-setTimeout(computerMove,500);
 
 }
+
+
+if(
+mode==="computer" &&
+game.turn()==="b"
+) {
+
+setTimeout(
+computerMove,
+500
+);
+
+}
+
 
 return;
 
@@ -905,52 +1628,85 @@ return;
 } catch(e) {}
 
 
-if(piece &&
-piece.color===game.turn()) {
+/* SELECT ANOTHER PIECE */
 
-selectedSquare=square;
+if(
+piece &&
+piece.color ===
+game.turn()
+) {
+
+selectedSquare =
+square;
 
 } else {
 
-selectedSquare=null;
+selectedSquare =
+null;
 
 }
+
 
 renderBoard();
 
 }
 
 
+/* COMPUTER */
+
 function computerMove() {
 
-if(game.isGameOver()) return;
+if(game.isGameOver()) {
+
+return;
+
+}
+
 
 const moves =
-game.moves({verbose:true});
+game.moves({
+verbose:true
+});
 
-if(moves.length===0) return;
 
-let bestMove=null;
+if(moves.length===0) {
 
-let bestScore=-Infinity;
+return;
+
+}
+
+
+let bestMove = null;
+
+let bestScore = -Infinity;
+
 
 for(const move of moves) {
 
+
 game.move({
+
 from:move.from,
+
 to:move.to,
+
 promotion:"q"
+
 });
+
 
 let score =
 evaluatePosition(game);
 
+
 game.undo();
 
-if(score>bestScore) {
 
-bestScore=score;
-bestMove=move;
+if(score > bestScore) {
+
+bestScore = score;
+
+bestMove = move;
 
 }
 
@@ -960,9 +1716,14 @@ bestMove=move;
 if(!bestMove) {
 
 bestMove =
-moves[Math.floor(Math.random()*moves.length)];
+moves[
+Math.floor(
+Math.random()*moves.length
+)
+];
 
 }
+
 
 game.move({
 
@@ -974,31 +1735,43 @@ promotion:"q"
 
 });
 
+
 recordPosition();
 
 renderBoard();
 
+
 if(game.isGameOver()) {
+
 finishGame();
-}
 
 }
 
+}
+
+
+/* AI */
 
 function evaluatePosition(position) {
 
-const values={
+const values = {
+
 p:100,
 n:320,
 b:330,
 r:500,
 q:900,
 k:20000
+
 };
 
-let score=0;
 
-const board=position.board();
+let score = 0;
+
+
+const board =
+position.board();
+
 
 for(const row of board) {
 
@@ -1006,60 +1779,91 @@ for(const piece of row) {
 
 if(!piece) continue;
 
-const value=values[piece.type];
+
+const value =
+values[piece.type];
+
 
 if(piece.color==="b") {
-score+=value;
+
+score += value;
+
 } else {
-score-=value;
-}
+
+score -= value;
 
 }
 
 }
 
-return score + Math.random()*5;
+}
+
+
+return score +
+Math.random()*5;
 
 }
 
+
+/* UNDO */
 
 function undoMove() {
 
 if(game.history().length===0) {
+
 return;
-}
-
-game.undo();
-
-if(mode==="computer" &&
-game.history().length>0) {
-
-game.undo();
 
 }
 
-selectedSquare=null;
+
+game.undo();
+
+
+if(
+mode==="computer" &&
+game.history().length>0
+) {
+
+game.undo();
+
+}
+
+
+selectedSquare =
+null;
+
 
 renderBoard();
 
 }
 
 
+/* NEW GAME */
+
 function newGame() {
 
 stopClock();
 
-game=new Chess();
+game =
+new Chess();
 
-selectedSquare=null;
+selectedSquare =
+null;
 
-whiteTime=gameTime;
+whiteTime =
+gameTime;
 
-blackTime=gameTime;
+blackTime =
+gameTime;
 
-gameStarted=false;
+gameStarted =
+false;
 
-document.getElementById("hintBox").textContent="";
+
+document
+.getElementById("hintBox")
+.textContent = "";
+
 
 updateClock();
 
@@ -1068,44 +1872,63 @@ renderBoard();
 }
 
 
+/* MODE */
+
 function setMode(newMode) {
 
-mode=newMode;
+mode =
+newMode;
 
-document.getElementById("modeText").textContent =
+
+document
+.getElementById("modeText")
+.textContent =
 newMode==="computer"
 ? "Computer"
 : "Two Players";
+
 
 newGame();
 
 }
 
+
+/* TIME */
 
 function changeTime() {
 
 gameTime =
 parseInt(
-document.getElementById("timeSelect").value
+document
+.getElementById("timeSelect")
+.value
 );
+
 
 newGame();
 
 }
 
 
+/* CLOCK */
+
 function startClock() {
 
 stopClock();
 
-timer=setInterval(()=>{
+
+timer =
+setInterval(() => {
+
 
 if(game.isGameOver()) {
 
 stopClock();
+
 return;
 
 }
+
 
 if(game.turn()==="w") {
 
@@ -1117,29 +1940,39 @@ blackTime--;
 
 }
 
+
 updateClock();
+
 
 if(whiteTime<=0) {
 
 whiteTime=0;
+
 stopClock();
 
-alert("⏰ White's time is over!");
+alert(
+"⏰ White's time is over!"
+);
 
 finishGame();
 
 }
+
 
 if(blackTime<=0) {
 
 blackTime=0;
+
 stopClock();
 
-alert("⏰ Black's time is over!");
+alert(
+"⏰ Black's time is over!"
+);
 
 finishGame();
 
 }
+
 
 },1000);
 
@@ -1161,10 +1994,15 @@ timer=null;
 
 function updateClock() {
 
-document.getElementById("whiteClock").textContent =
+document
+.getElementById("whiteClock")
+.textContent =
 formatTime(whiteTime);
 
-document.getElementById("blackClock").textContent =
+
+document
+.getElementById("blackClock")
+.textContent =
 formatTime(blackTime);
 
 }
@@ -1178,19 +2016,26 @@ Math.floor(seconds/60);
 const sec =
 seconds%60;
 
-return min + ":" +
-String(sec).padStart(2,"0");
+
+return min +
+":" +
+String(sec)
+.padStart(2,"0");
 
 }
 
+
+/* STATUS */
 
 function updateStatus() {
 
 const status =
 document.getElementById("status");
 
+
 const turn =
 document.getElementById("turnText");
+
 
 turn.textContent =
 game.turn()==="w"
@@ -1200,15 +2045,18 @@ game.turn()==="w"
 
 if(game.isCheckmate()) {
 
+
 const winner =
 game.turn()==="w"
 ? "Black"
 : "White";
 
+
 status.textContent =
 "🏆 Checkmate! " +
 winner +
 " wins!";
+
 
 return;
 
@@ -1227,12 +2075,16 @@ return;
 
 if(game.inCheck()) {
 
+
 status.textContent =
 "⚠️ Check! " +
-(game.turn()==="w"
+(
+game.turn()==="w"
 ? "White"
-: "Black") +
+: "Black"
+) +
 " is in check.";
+
 
 return;
 
@@ -1240,42 +2092,59 @@ return;
 
 
 status.textContent =
-(game.turn()==="w"
+(
+game.turn()==="w"
 ? "White"
-: "Black") +
+: "Black"
+) +
 " to move.";
 
 }
 
 
+/* FINISH */
+
 function finishGame() {
 
 stopClock();
 
+
 stats.played++;
+
 
 if(game.isDraw()) {
 
 stats.drawn++;
 
-} else if(game.isCheckmate()) {
+}
+
+
+else if(game.isCheckmate()) {
+
 
 const winner =
 game.turn()==="w"
 ? "Black"
 : "White";
 
+
 if(mode==="computer") {
 
+
 if(winner==="White") {
+
 stats.won++;
+
 } else {
+
 stats.lost++;
-}
 
 }
 
 }
+
+}
+
 
 saveStats();
 
@@ -1283,6 +2152,8 @@ updateStats();
 
 }
 
+
+/* STATS */
 
 function saveStats() {
 
@@ -1296,16 +2167,27 @@ JSON.stringify(stats)
 
 function updateStats() {
 
-document.getElementById("gamesPlayed").textContent =
+document
+.getElementById("gamesPlayed")
+.textContent =
 stats.played;
 
-document.getElementById("gamesWon").textContent =
+
+document
+.getElementById("gamesWon")
+.textContent =
 stats.won;
 
-document.getElementById("gamesLost").textContent =
+
+document
+.getElementById("gamesLost")
+.textContent =
 stats.lost;
 
-document.getElementById("gamesDrawn").textContent =
+
+document
+.getElementById("gamesDrawn")
+.textContent =
 stats.drawn;
 
 }
@@ -1313,12 +2195,15 @@ stats.drawn;
 
 function resetStats() {
 
-stats={
+stats = {
+
 played:0,
 won:0,
 lost:0,
 drawn:0
+
 };
+
 
 saveStats();
 
@@ -1327,24 +2212,41 @@ updateStats();
 }
 
 
+/* HINT */
+
 function giveHint() {
 
 const moves =
-game.moves({verbose:true});
+game.moves({
+verbose:true
+});
+
 
 if(moves.length===0) {
 
-document.getElementById("hintBox").textContent =
+
+document
+.getElementById("hintBox")
+.textContent =
 "No moves available.";
+
 
 return;
 
 }
 
-const move =
-moves[Math.floor(Math.random()*moves.length)];
 
-document.getElementById("hintBox").textContent =
+const move =
+moves[
+Math.floor(
+Math.random()*moves.length
+)
+];
+
+
+document
+.getElementById("hintBox")
+.textContent =
 "💡 Try: " +
 move.from.toUpperCase() +
 " → " +
@@ -1353,18 +2255,26 @@ move.to.toUpperCase();
 }
 
 
+/* LESSONS */
+
 function showLesson(text) {
 
-document.getElementById("lessonText").textContent =
+document
+.getElementById("lessonText")
+.textContent =
 text;
 
 }
 
 
+/* PUZZLES */
+
 function puzzleAnswer(number) {
 
 const result =
-document.getElementById("puzzleResult");
+document
+.getElementById("puzzleResult");
+
 
 if(number===1) {
 
@@ -1372,6 +2282,7 @@ result.textContent =
 "💡 Hint: Look for a forcing move, especially a check.";
 
 }
+
 
 if(number===2) {
 
@@ -1383,15 +2294,14 @@ result.textContent =
 }
 
 
-function recordPosition() {
+/* FUTURE */
 
-/*
-Future feature:
-game history and player analysis.
-*/
+function recordPosition() {
 
 }
 
+
+/* START */
 
 updateClock();
 
